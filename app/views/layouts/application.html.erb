@@ -21,14 +21,33 @@
     <link rel="apple-touch-icon" href="/icon.png">
     <link rel="manifest" href="/manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
   </head>
 
-  <body>
+  <% desktop_cols = admin_logged_in? ? Setting.get("grid_desktop", "3") : "3" %>
+  <% mobile_cols  = admin_logged_in? ? Setting.get("grid_mobile", "2") : "2" %>
+
+  <body data-controller="sandbox delete-modal grid" 
+        data-sandbox-admin-value="<%= admin_logged_in? %>"
+        data-delete-modal-admin-value="<%= admin_logged_in? %>"
+        data-grid-admin-value="<%= admin_logged_in? %>"
+        data-grid-desktop-value="<%= desktop_cols %>"
+        data-grid-mobile-value="<%= mobile_cols %>"
+        style="--desktop-cols: <%= desktop_cols %>; --mobile-cols: <%= mobile_cols %>;">
+    <% unless admin_logged_in? %>
+      <div class="sandbox-banner" style="background: #f4efe6; border: 1px solid #e2dacd; border-radius: 14px; padding: 7px 14px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 0.85rem; color: var(--text-brown, #5c4033); box-sizing: border-box;">
+        <span><i class="fa-solid fa-flask"></i> <strong>Sandbox Mode:</strong> Local to this tab &amp; resets after 15m inactivity.</span>
+        <button type="button" data-action="click->sandbox#resetSandbox" style="background: #e8e0d2; border: 1px solid #d3c7b5; border-radius: 12px; padding: 3px 10px; margin: 0; font-size: 0.75rem; font-weight: 700; cursor: pointer; color: var(--header-brown, #3d2817); flex-shrink: 0;">
+          <i class="fa-solid fa-rotate-left"></i> Reset
+        </button>
+      </div>
+    <% end %>
+
+    <!-- Top Navigation Icons Bar (Visible at all times) -->
+    <%= render "shared/top_nav" %>
+
     <% if flash.any? %>
       <div class="flash-overlay">
         <% flash.each do |flash_type, message| %>
-          <!-- The data-controller hooks up our JS, and data-action lets you click to dismiss it instantly -->
           <div class="flash-message <%= flash_type %>" 
                data-controller="flash" 
                data-action="click->flash#dismiss">
@@ -38,7 +57,11 @@
       </div>
     <% end %>
 
-    <!-- This is where your individual pages load -->
-    <%= yield %>
+    <main class="page-container">
+      <%= yield %>
+    </main>
+
+    <!-- Delete All Data Confirmation Modal -->
+    <%= render "shared/delete_all_modal" %>
   </body>
 </html>

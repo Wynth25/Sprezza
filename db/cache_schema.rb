@@ -10,13 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_13_161651) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_03_193500) do
   create_table "baskets", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "guest_token"
     t.float "max_dose"
     t.float "min_dose"
     t.string "name"
+    t.integer "position"
     t.datetime "updated_at", null: false
     t.index ["guest_token"], name: "index_baskets_on_guest_token"
   end
@@ -54,11 +55,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_13_161651) do
     t.integer "bean_id", null: false
     t.datetime "created_at", null: false
     t.string "guest_token"
+    t.integer "position"
     t.string "style"
     t.datetime "updated_at", null: false
     t.index ["basket_id"], name: "index_recipes_on_basket_id"
     t.index ["bean_id"], name: "index_recipes_on_bean_id"
     t.index ["guest_token"], name: "index_recipes_on_guest_token"
+  end
+
+  create_table "settings", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "key", null: false
+    t.datetime "updated_at", null: false
+    t.string "value"
+    t.index ["key"], name: "index_settings_on_key", unique: true
   end
 
   add_foreign_key "brews", "recipes"

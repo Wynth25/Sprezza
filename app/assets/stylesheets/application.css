@@ -11,6 +11,12 @@
   --danger-hover: #d73a47d9;
 }
 
+/* Keep vertical scrollbar space consistent so centered pages never shift horizontally */
+html {
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+}
+
 /* Wrap the whole app in a mobile-friendly column */
 body {
   background-color: var(--bg-beige);
@@ -21,6 +27,10 @@ body {
   margin: 0 auto;
   padding: 20px;
   transition: background-color 0.3s ease;
+}
+
+.page-container {
+  width: 100%;
 }
 
 /* Bold, rounded headers */
@@ -102,14 +112,42 @@ hr {
   border-radius: 2px;
 }
 
-/* Clickable Recipe Cards - 3 Column Square Grid */
-.recipe-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+/* Bean heading row on Recipes page: name + age on the left, plus button on the right */
+.bean-heading {
+  display: flex;
+  align-items: center;
   gap: 12px;
-  margin-bottom: 20px;
+  margin: 0 0 12px 0;
 }
 
+.bean-heading-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.bean-heading-name {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--header-brown);
+  text-decoration: none;
+}
+
+.bean-heading-age {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.bean-heading .add-recipe-link {
+  flex-shrink: 0;
+  background-color: var(--btn-bg);
+  color: var(--text-brown);
+}
+
+/* Clickable Recipe Cards Wrapper */
 .recipe-card-wrapper {
   position: relative;
 }
@@ -144,16 +182,74 @@ hr {
   font-weight: 700;
   font-size: 1.3rem;
   color: var(--header-brown);
-  margin-bottom: 20px;
+  margin-bottom: 0;
   line-height: 1.1;
+  flex: 1 1 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .recipe-card-stats {
   font-size: 1.3rem;
   font-weight: 700;
   line-height: 1.5;
+  flex: 1 1 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
+/* Square card: title fills top half, numbers fill bottom half (3rd & 4th quarters) */
+.recipe-card {
+  container-type: inline-size;
+}
+
+/* Dose (left) | Grind (right) */
+.recipe-card-stats:has(.recipe-stat) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  line-height: 1.1;
+  width: 100%;
+  padding-bottom: 3cqw;
+  box-sizing: border-box;
+}
+
+.recipe-stat {
+  position: relative;
+  display: block;
+  font-size: 1.7rem;
+  font-size: 15.5cqw;
+  font-weight: 800;
+  color: var(--header-brown);
+  white-space: nowrap;
+}
+
+/* "g" hangs to the right of the dose number */
+.recipe-stat small {
+  position: absolute;
+  left: 100%;
+  bottom: 0.12em;
+  margin-left: 2px;
+  font-size: 0.5em;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+/* Gear icon hangs to the RIGHT of the grind number */
+.recipe-stat-grind i {
+  position: absolute;
+  left: 100%;
+  bottom: 0.28em;
+  margin-left: 4px;
+  font-size: 0.45em;
+  color: var(--accent);
+}
 .recipe-card-label {
   font-size: 1.3rem;
   font-weight: 600;
@@ -173,8 +269,30 @@ hr {
 /* Unified Dropdown Menu & Container */
 .dropdown-container { 
   position: relative; 
-  display: inline-block; 
+  display: inline-flex;
+  align-items: center;
   z-index: 50;
+}
+
+.menu-toggle-btn {
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  cursor: pointer;
+  font-size: 1.4rem;
+  padding: 0 8px;
+  margin: 0;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-brown);
+  border-radius: 10px;
+}
+
+.menu-toggle-btn:hover {
+  background-color: var(--btn-bg);
+  color: var(--header-brown);
 }
 
 .dropdown-menu {
@@ -386,9 +504,15 @@ body.mode-delete .recipe-card-wrapper:hover .delete-overlay-form {
 }
 
 /* 1. Disable general action links and buttons during edit modes */
+body.mode-sort .header-normal-actions,
+body.mode-delete .header-normal-actions {
+  display: none !important;
+}
+
 body.mode-sort .add-recipe-link,
 body.mode-delete .add-recipe-link,
 body.mode-sort .bean-card .action-icon-btn,
+body.mode-sort .basket-card .action-icon-btn,
 body.mode-sort .page-header .action-icon-btn,
 body.mode-delete .page-header .action-icon-btn,
 body.mode-sort .page-header .btn-secondary,
@@ -397,6 +521,30 @@ body.mode-sort .dropdown-container > button,
 body.mode-delete .dropdown-container > button {
   pointer-events: none !important;
   opacity: 0.3 !important;
+}
+
+/* Basket Delete Mode Actions */
+.basket-delete-form {
+  display: none;
+  margin: 0;
+}
+
+.basket-delete-btn {
+  background-color: var(--danger-red);
+  color: white;
+}
+
+.basket-delete-btn:hover {
+  background-color: var(--danger-hover);
+  color: white;
+}
+
+body.mode-delete .basket-delete-form {
+  display: inline-flex;
+}
+
+body.mode-delete .basket-edit-btn {
+  display: none;
 }
 
 /* 2. PROTECT the Cancel and Done buttons so they always work */
@@ -596,29 +744,20 @@ body.is-dragging .recipe-card-wrapper:hover .recipe-sort-overlay {
   background-color: var(--danger-red, #dc2626);
 }
 
-/* Clickable Recipe Cards - Default 3 Columns on PC */
+/* Clickable Recipe Cards - Default 3 Columns on PC (>= 1000px) */
 .recipe-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(var(--desktop-cols, 3), 1fr);
   grid-auto-rows: 1fr;
   gap: 12px;
   margin-bottom: 20px;
 }
 
-/* Default Mobile: 2 Columns */
-@media (max-width: 768px) {
+/* Default Mobile (< 1000px): 2 Columns */
+@media (max-width: 999px) {
   .recipe-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(var(--mobile-cols, 2), 1fr);
   }
-}
-
-/* Toggle States via Dropdown Menu */
-body.grid-2-cols .recipe-grid {
-  grid-template-columns: repeat(2, 1fr) !important;
-}
-
-body.grid-3-cols .recipe-grid {
-  grid-template-columns: repeat(3, 1fr) !important;
 }
 
 /* Force iOS date inputs to respect container bounds and match your other inputs */
@@ -629,5 +768,139 @@ input[type="date"] {
   box-sizing: border-box;
   background-color: var(--card-cream);
   font-family: inherit;
+}
+
+
+
+/* ==========================================================================
+   Delete Confirmation Modal
+   ========================================================================== */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(3px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.modal-box {
+  background: var(--card-cream, #ffffff);
+  border-radius: 20px;
+  max-width: 480px;
+  width: 100%;
+  padding: 26px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--btn-bg, #eaddcf);
+  box-sizing: border-box;
+  animation: modalFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: scale(0.94) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.hidden,
+.modal-backdrop.hidden {
+  display: none !important;
+}
+
+
+/* ==========================================================================
+   Top Navigation Tabs (Visible at all times)
+   ========================================================================== */
+.top-nav-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 12px 0 20px 0;
+  width: 100%;
+}
+
+.nav-tabs {
+  display: inline-flex;
+  background: var(--card-cream, #ffffff);
+  padding: 5px;
+  border-radius: 30px;
+  border: 1.5px solid var(--btn-bg, #eaddcf);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  gap: 6px;
+}
+
+.nav-tab {
+  width: 46px;
+  height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 23px;
+  color: var(--text-brown, #5c4033);
+  font-size: 1.15rem;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none;
+}
+
+.nav-tab:hover {
+  background: var(--btn-bg, #eaddcf);
+  color: var(--header-brown, #382e24);
+  opacity: 1;
+}
+
+.nav-tab.active {
+  background: var(--header-brown, #382e24);
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(56, 46, 36, 0.25);
+}
+
+/* ==========================================================================
+   Settings Page Styles
+   ========================================================================== */
+.settings-card {
+  background: var(--card-cream, #ffffff);
+  border: 2px solid var(--btn-bg, #eaddcf);
+  border-radius: 18px;
+  padding: 22px 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.grid-toggle-btn {
+  flex: 1;
+  padding: 14px 16px;
+  border-radius: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background-color: var(--bg-beige, #f9f6f0);
+  border: 2px solid var(--btn-bg, #eaddcf);
+  color: var(--text-brown, #5c4033);
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.grid-toggle-btn:hover {
+  background-color: var(--btn-bg, #eaddcf);
+}
+
+.grid-toggle-btn.active-grid-btn {
+  background-color: var(--header-brown, #382e24);
+  color: #ffffff;
+  border-color: var(--header-brown, #382e24);
+  box-shadow: 0 2px 8px rgba(56, 46, 36, 0.2);
+}
+
+/* Extra spacing: lift the dose slightly away from the grind */
+.recipe-stat-dose {
+  transform: translateY(-0.5em);
 }
 

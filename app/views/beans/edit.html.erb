@@ -1,4 +1,6 @@
-<%= render "shared/header", title: "Edit Bean", back_path: beans_path, back_label: "Back to Beans" %>
+<% content_for :title, "Edit Bean" %>
+
+<%= render "shared/header", title: "Edit Bean" %>
 
 <%= render "form", bean: @bean %>
 

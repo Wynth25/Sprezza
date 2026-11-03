@@ -1,11 +1,5 @@
-<% content_for :title, "Editing basket" %>
+<% content_for :title, "Edit Basket" %>
 
-<h1>Editing basket</h1>
+<%= render "shared/header", title: "Edit Basket" %>
 
 <%= render "form", basket: @basket %>
-
-<br>
-
-<div>
-  <%= link_to "Back to baskets", baskets_path %>
-</div>

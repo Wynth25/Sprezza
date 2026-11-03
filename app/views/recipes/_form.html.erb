@@ -15,7 +15,7 @@
       <%= form.label :basket_id, "Basket:", style: "display: block; font-weight: bold; margin-bottom: 5px;" %>
       
       <%= form.select :basket_id, 
-            options_for_select(Basket.all.map { |b| [b.name, b.id, { "data-min" => b.min_dose, "data-max" => b.max_dose }] }), 
+            options_for_select(Basket.order(position: :asc, created_at: :asc).map { |b| [b.name, b.id, { "data-min" => b.min_dose, "data-max" => b.max_dose }] }), 
             { prompt: "–" }, 
             { data: { sync_slider_target: "basketSelect", action: "change->sync-slider#updateBounds" }, 
               style: "padding: 8px; width: 100%; max-width: 300px;" } %>

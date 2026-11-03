@@ -1,9 +1,10 @@
 class BasketsController < ApplicationController
   before_action :set_basket, only: %i[ show edit update destroy ]
+  before_action :require_admin!, only: %i[ create update destroy sort ]
 
   # GET /baskets or /baskets.json
   def index
-    @baskets = Basket.all
+    @baskets = Basket.order(position: :asc, created_at: :asc)
   end
 
   # GET /baskets/1 or /baskets/1.json
@@ -57,14 +58,22 @@ class BasketsController < ApplicationController
     end
   end
 
-  private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_basket
-      @basket = Basket.find(params.expect(:id))
+  def sort
+    if params[:basket_ids].present?
+      params[:basket_ids].each_with_index do |id, index|
+        Basket.where(id: id).update_all(position: index + 1)
+      end
     end
+    head :ok
+  end
 
-    # Only allow a list of trusted parameters through.
-    def basket_params
-      params.expect(basket: [ :name, :min_dose, :max_dose ])
-    end
+  private
+
+  def set_basket
+    @basket = Basket.find(params[:id])
+  end
+
+  def basket_params
+    params.require(:basket).permit(:name, :min_dose, :max_dose, :position)
+  end
 end

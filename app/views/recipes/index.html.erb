@@ -4,143 +4,111 @@
   <div class="menu-backdrop hidden" data-dashboard-target="backdrop" data-action="click->dashboard#closeDropdown"></div>
 
   <!-- Capture Header Actions for the Universal Header -->
-    <% header_actions = capture do %>
-      <div data-dashboard-target="contextActions" class="context-actions hidden">
-        <button data-action="dashboard#cancelMode" class="btn-secondary">Cancel</button>
-        <button data-action="dashboard#doneMode" class="btn-primary">Done</button>
-      </div>
+  <% header_actions = capture do %>
+    <div data-dashboard-target="contextActions" class="context-actions hidden">
+      <button type="button" data-action="dashboard#cancelMode" class="btn-secondary">Cancel</button>
+      <button type="button" data-action="dashboard#doneMode" class="btn-primary">Done</button>
+    </div>
 
-      <div class="dropdown-container">
-        <button data-dashboard-target="menuToggle" style="border: none; background: transparent; box-shadow: none; cursor: pointer; font-size: 1.5rem; padding: 0 10px; color: var(--text-brown);" data-action="dashboard#toggleDropdown">
-          <i class="fa-solid fa-ellipsis-vertical"></i>
+    <div class="dropdown-container">
+      <button type="button" data-dashboard-target="menuToggle" class="menu-toggle-btn" data-action="dashboard#toggleDropdown" title="Menu">
+        <i class="fa-solid fa-ellipsis-vertical"></i>
+      </button>
+      
+      <div class="dropdown-menu hidden" data-dashboard-target="dropdownMenu">
+        <button type="button" class="dropdown-item" data-action="dashboard#enableSortMode">
+          <i class="fa-solid fa-grip-vertical"></i> Change order
         </button>
         
-        <div class="dropdown-menu hidden" data-dashboard-target="dropdownMenu">
-          <%= link_to "<i class='bx bxs-coffee-bean'></i> Beans".html_safe, beans_path, class: "dropdown-item" %>
-          <%= link_to "<svg xmlns='http://www.w3.org/2000/svg' width='1.15em' height='1.15em' viewBox='0 0 24 24' fill='currentColor' style='display: inline-block; vertical-align: -0.18em;'><path fill-rule='evenodd' d='M1.5 6.5C1.5 5.7 2.2 5 3 5h18c.8 0 1.5.7 1.5 1.5s-.7 1.5-1.5 1.5h-1.2l-1.2 9.5c-.2 1.5-1.5 2.5-3 2.5H8.4c-1.5 0-2.8-1-3-2.5L4.2 8H3c-.8 0-1.5-.7-1.5-1.5zm4.8 4.5h11.4l-.25 2H6.55l-.25-2z' clip-rule='evenodd'/></svg> Baskets".html_safe, baskets_path, class: "dropdown-item" %>
-          
-          <hr>
+        <button type="button" class="dropdown-item" data-action="dashboard#enableDeleteMode">
+          <i class="fa-solid fa-trash-can"></i> Delete
+        </button>
+        
+        <hr>
 
-          <button type="button" class="dropdown-item" data-action="dashboard#enableSortMode"><i class="fa-solid fa-grip-vertical"></i> Adjust order</button>
-          <button type="button" class="dropdown-item" data-action="dashboard#enableDeleteMode"><i class="fa-solid fa-trash-can"></i> Delete recipes</button>
-          
-          <hr>
-          
-          <!-- Grid Layout Toggles -->
-          <button type="button" class="dropdown-item" onclick="document.body.classList.remove('grid-3-cols'); document.body.classList.add('grid-2-cols');">
-            <i class="fa-solid fa-table-cells-large"></i> 2 Squares per row
-          </button>
-          <button type="button" class="dropdown-item" onclick="document.body.classList.remove('grid-2-cols'); document.body.classList.add('grid-3-cols');">
-            <i class="fa-solid fa-table-cells"></i> 3 Squares per row
-          </button>
-
-          <hr>
-
-          <% if admin_logged_in? %>
-            <%= button_to "Lock to Sandbox", logout_path, method: :delete, class: "dropdown-item", style: "color: var(--danger-red);" %>
-          <% else %>
-            <%= link_to "Admin Login", login_path, class: "dropdown-item" %>
-          <% end %>
-        </div>
+        <%= link_to "<i class='fa-solid fa-gear'></i> Settings".html_safe, settings_path, class: "dropdown-item" %>
       </div>
-    <% end %>
+    </div>
+  <% end %>
 
   <!-- Universal Header -->
   <%= render "shared/header", 
         title: "Sprezza", 
         subtitle: "The art of the effortless dial-in.",
-        hide_back: true, 
         action: header_actions %>
-
-  <br>
 
   <!-- Sortable Bean List -->
   <div data-dashboard-target="beanList">
-    <% @beans.each do |bean| %>
-      <div data-id="<%= bean.id %>" style="background: transparent;">
-        
-        <h2 style="display: flex; align-items: center;">
-          <span class="drag-handle"><i class="fa-solid fa-grip"></i></span>
+    <% if @beans.any? %>
+      <% @beans.each do |bean| %>
+        <div data-id="<%= bean.id %>" style="background: transparent;">
           
-          <!-- This links to the beans index and scrolls down to this specific bean -->
-          <%= link_to "#{bean.roastery} #{bean.name}", beans_path(anchor: "bean_#{bean.id}"), style: "text-decoration: none; color: inherit;" %>
-          
-          <small style="margin-left: 8px; font-weight: normal; font-size: 0.9rem;">
-            (<%= bean.effective_age_in_days %> days old)
-          </small> 
-          
-          <%= link_to "+", new_recipe_path(bean_id: bean.id), class: "add-recipe-link", style: "margin-left: 8px;" %>
-        </h2>
+          <div class="bean-heading">
+            <span class="drag-handle"><i class="fa-solid fa-grip"></i></span>
 
-        <% if bean.recipes.any? %>
-          <div class="recipe-grid" data-dashboard-target="recipeGrid" data-bean-id="<%= bean.id %>">
-            <% bean.recipes.each do |recipe| %>
-              
-              <div class="recipe-card-wrapper" data-id="<%= recipe.id %>">
+            <div class="bean-heading-text">
+              <!-- Links to the beans page and scrolls to this specific bean -->
+              <%= link_to "#{bean.roastery} #{bean.name}", beans_path(anchor: "bean_#{bean.id}"), class: "bean-heading-name" %>
+              <span class="bean-heading-age"><%= bean.effective_age_in_days %> days old</span>
+            </div>
+
+            <%= link_to "<i class='fa-solid fa-plus'></i>".html_safe, new_recipe_path(bean_id: bean.id), class: "action-icon-btn add-recipe-link", title: "Add recipe" %>
+          </div>
+
+          <% if bean.recipes.any? %>
+            <div class="recipe-grid" data-dashboard-target="recipeGrid" data-bean-id="<%= bean.id %>" data-basket-scope="true">
+              <% bean.recipes.each do |recipe| %>
                 
-                <%= link_to recipe_path(recipe), class: "recipe-card" do %>
-                  <% if recipe.style.to_s.start_with?("Ristretto") %>
-                    <div class="recipe-corner-badge">R</div>
-                  <% elsif recipe.style.to_s.start_with?("Lungo") %>
-                    <div class="recipe-corner-badge">L</div>
+                <div class="recipe-card-wrapper" data-id="<%= recipe.id %>" data-basket-id="<%= recipe.basket_id %>">
+                  
+                  <%= link_to recipe_path(recipe), class: "recipe-card" do %>
+                    <% if recipe.style.to_s.start_with?("Ristretto") %>
+                      <div class="recipe-corner-badge">R</div>
+                    <% elsif recipe.style.to_s.start_with?("Lungo") %>
+                      <div class="recipe-corner-badge">L</div>
+                    <% end %>
+
+                    <div class="recipe-card-title">
+                      <%= recipe.basket.name %>
+                    </div>
+                    
+                    <div class="recipe-card-stats">
+                      <% if recipe.latest_brew %>
+                        <div class="recipe-stat recipe-stat-dose"><%= recipe.latest_brew.dose %><small>g</small></div>
+                        <div class="recipe-stat recipe-stat-grind"><%= recipe.latest_brew.grind %><i class="fa-solid fa-gear"></i></div>
+                      <% else %>
+                        <em style="font-size: 0.85rem; font-weight: 400; color: #888;">No brews</em>
+                      <% end %>
+                    </div>
                   <% end %>
 
-                  <div class="recipe-card-title">
-                    <%= recipe.basket.name %>
+                  <!-- Sort Overlay Grip (Sort mode) -->
+                  <div class="recipe-sort-overlay">
+                    <i class="fa-solid fa-grip-vertical"></i>
                   </div>
-                  
-                  <div class="recipe-card-stats">
-                    <% if recipe.latest_brew %>
-                      <div><%= recipe.latest_brew.dose %>g</div>
-                      <div class="recipe-card-label"><%= recipe.latest_brew.grind %></div>
-                    <% else %>
-                      <em style="font-size: 0.85rem; font-weight: 400; color: #888;">No brews</em>
-                    <% end %>
-                  </div>
-                <% end %>
 
-                <!-- Sort Overlay Grip (Sort mode) -->
-                <div class="recipe-sort-overlay">
-                  <i class="fa-solid fa-grip-vertical"></i>
+                  <!-- Delete Overlay Form (Delete mode) -->
+                  <%= button_to recipe_path(recipe), method: :delete, form_class: "delete-overlay-form", data: { turbo_confirm: "Delete #{recipe.basket.name} recipe for #{bean.name}?", action: "click->sandbox#deleteRecipe" }, class: "recipe-delete-overlay" do %>
+                    <i class="fa-solid fa-trash-can"></i>
+                  <% end %>
+                  
                 </div>
 
-                <!-- Delete Overlay Form (Delete mode) -->
-                <%= button_to recipe_path(recipe), method: :delete, form_class: "delete-overlay-form", data: { turbo_confirm: "Delete #{recipe.basket.name} recipe for #{bean.name}?" }, class: "recipe-delete-overlay" do %>
-                  <i class="fa-solid fa-trash-can"></i>
-                <% end %>
-                
-              </div>
-
-            <% end %>
-          </div>
-        <% else %>
-          <p>No baskets dialed in yet.</p>
-        <% end %>
-        
-        <hr>
+              <% end %>
+            </div>
+          <% else %>
+            <p>No baskets dialed in yet.</p>
+          <% end %>
+          
+          <hr>
+        </div>
+      <% end %>
+    <% else %>
+      <div style="text-align: center; padding: 40px 20px; background-color: var(--card-cream); border: 2px dashed var(--btn-bg); border-radius: 16px;">
+        <p style="font-weight: 700; color: var(--text-brown); margin-bottom: 12px;">No active beans or recipes yet.</p>
+        <%= link_to "+ Add your first bean", new_bean_path %>
       </div>
     <% end %>
   </div>
 
 </div>
-
-
-
-
-
-
-<!-- todo:
-
-YEAH {beans index}
-YEAH {beans index} [new] [archived]
-YEAH {beans archived}
-YEAH {beans archived} [acitve beans]
-YEAH {recipe show} beans info
-YEAH click on bean on {recipe index} takes to {bean show} (correction - take to {bean index} with that bean highlighted)
-YEAH correct back actions
-
-
-YEAH drop down menu items - icons alignment
-YEAH adjust order for recipes not only beans
-
--->

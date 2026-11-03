@@ -1,43 +1,90 @@
 <% content_for :title, "Baskets" %>
 
-<%= render "shared/header", 
-      title: "Baskets", 
-      action: link_to("<i class='fa-solid fa-plus'></i> New Basket".html_safe, new_basket_path, 
-      class: "btn-primary", 
-      style: "display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 20px; font-size: 0.95rem; text-decoration: none;") %>
+<div data-controller="dashboard">
 
-      
-<!-- Baskets List -->
-<div id="baskets" style="display: flex; flex-direction: column; gap: 14px;">
-  <% if @baskets.any? %>
-    <% @baskets.each do |basket| %>
-      <div style="background-color: var(--card-cream); border: 2px solid var(--btn-bg); border-radius: 16px; padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
-        
-        <!-- Basket Info -->
-        <div>
-          <h2 style="margin: 0; font-size: 1.25rem;"><%= basket.name %></h2>
-          <% if basket.respond_to?(:size) && basket.size.present? %>
-            <span style="color: var(--accent); font-weight: 700; font-size: 0.9rem;"><%= basket.size %>g capacity</span>
-          <% end %>
-        </div>
+  <!-- Global Backdrop Overlay -->
+  <div class="menu-backdrop hidden" data-dashboard-target="backdrop" data-action="click->dashboard#closeDropdown"></div>
 
-        <!-- Actions -->
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <%= link_to edit_basket_path(basket), title: "Edit Basket", style: "background-color: var(--btn-bg); color: var(--text-brown); width: 38px; height: 38px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; font-size: 0.95rem; transition: background-color 0.2s;" do %>
-            <i class="fa-solid fa-pen-to-square"></i>
-          <% end %>
+  <!-- Universal Header Actions -->
+  <% header_actions = capture do %>
+    <div data-dashboard-target="contextActions" class="context-actions hidden">
+      <button type="button" data-action="click->dashboard#cancelMode" class="btn-secondary">Cancel</button>
+      <button type="button" data-action="click->dashboard#doneMode" class="btn-primary">Done</button>
+    </div>
 
-          <%= button_to basket_path(basket), method: :delete, data: { turbo_confirm: "Are you sure you want to delete #{basket.name}? All associated recipes will also be removed." }, title: "Delete Basket", style: "background-color: var(--danger-red); color: white; width: 38px; height: 38px; border-radius: 50%; border: none; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.95rem; margin: 0; padding: 0; transition: background-color 0.2s;" do %>
-            <i class="fa-solid fa-trash-can"></i>
-          <% end %>
-        </div>
+    <div class="header-normal-actions" style="display: flex; gap: 8px; align-items: center;">
+      <%= link_to "<i class='fa-solid fa-plus'></i>".html_safe, new_basket_path, class: "action-icon-btn", style: "background-color: var(--header-brown); color: white;", title: "New Basket" %>
+    </div>
 
+    <div class="dropdown-container">
+      <button type="button" data-dashboard-target="menuToggle" class="menu-toggle-btn" data-action="dashboard#toggleDropdown" title="Menu">
+        <i class="fa-solid fa-ellipsis-vertical"></i>
+      </button>
+
+      <div class="dropdown-menu hidden" data-dashboard-target="dropdownMenu">
+        <button type="button" class="dropdown-item" data-action="dashboard#enableSortMode">
+          <i class="fa-solid fa-grip-vertical"></i> Change order
+        </button>
+
+        <button type="button" class="dropdown-item" data-action="dashboard#enableDeleteMode">
+          <i class="fa-solid fa-trash-can"></i> Delete
+        </button>
+
+        <hr>
+
+        <%= link_to "<i class='fa-solid fa-gear'></i> Settings".html_safe, settings_path, class: "dropdown-item" %>
       </div>
-    <% end %>
-  <% else %>
-    <div style="background-color: var(--card-cream); border: 2px dashed var(--btn-bg); border-radius: 16px; padding: 32px; text-align: center; color: var(--text-brown);">
-      <p style="margin-bottom: 12px; font-weight: 700;">No baskets added yet.</p>
-      <%= link_to "+ Add your first basket", new_basket_path %>
     </div>
   <% end %>
+
+  <%= render "shared/header",
+        title: "Baskets",
+        action: header_actions %>
+
+  <!-- Baskets List -->
+  <div id="baskets" data-dashboard-target="basketList" style="display: flex; flex-direction: column; gap: 14px;">
+    <% if @baskets.any? %>
+      <% @baskets.each do |basket| %>
+        <div class="basket-card" data-id="<%= basket.id %>" style="background-color: var(--card-cream); border: 2px solid var(--btn-bg); border-radius: 16px; padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; gap: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.03); transition: all 0.2s ease;">
+
+          <!-- Drag Handle + Basket Info -->
+          <div style="display: flex; align-items: center;">
+            <span class="drag-handle" style="font-size: 1.2rem;"><i class="fa-solid fa-grip"></i></span>
+            <div>
+              <h2 style="margin: 0; font-size: 1.25rem; line-height: 1.2;"><%= basket.name %></h2>
+              <% if basket.min_dose.present? && basket.max_dose.present? %>
+                <span style="color: var(--accent); font-weight: 700; font-size: 0.9rem;"><%= basket.min_dose %>g – <%= basket.max_dose %>g</span>
+              <% end %>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
+            <%= link_to edit_basket_path(basket), class: "action-icon-btn basket-edit-btn", title: "Edit Basket" do %>
+              <i class="fa-solid fa-pencil"></i>
+            <% end %>
+
+            <%= button_to basket_path(basket),
+                  method: :delete,
+                  form_class: "basket-delete-form",
+                  data: {
+                    turbo_confirm: "Are you sure you want to delete #{basket.name}? All associated recipes will also be removed.",
+                    action: "click->sandbox#deleteBasket"
+                  },
+                  title: "Delete Basket",
+                  class: "action-icon-btn basket-delete-btn" do %>
+              <i class="fa-solid fa-trash-can"></i>
+            <% end %>
+          </div>
+
+        </div>
+      <% end %>
+    <% else %>
+      <div style="background-color: var(--card-cream); border: 2px dashed var(--btn-bg); border-radius: 16px; padding: 32px; text-align: center; color: var(--text-brown);">
+        <p style="margin-bottom: 12px; font-weight: 700;">No baskets added yet.</p>
+        <%= link_to "+ Add your first basket", new_basket_path %>
+      </div>
+    <% end %>
+  </div>
+
 </div>

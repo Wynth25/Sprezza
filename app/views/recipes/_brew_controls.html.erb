@@ -1,19 +1,17 @@
 <%= turbo_frame_tag "brew_controls_#{recipe.id}" do %>
   <% latest = recipe.latest_brew %>
+  <% base_dose = latest&.dose || 18.0 %>
+  <% base_grind = latest&.grind || 4.0 %>
   
   <div data-controller="brew-adjust" 
-       data-brew-adjust-base-dose-value="<%= latest.dose %>" 
-       data-brew-adjust-base-grind-value="<%= latest.grind %>"
+       data-brew-adjust-base-dose-value="<%= base_dose %>" 
+       data-brew-adjust-base-grind-value="<%= base_grind %>"
        align="center">
        
-    <%= form_with url: quick_log_recipe_path(recipe), method: :post, data: { turbo_frame: "_top" } do |f| %>
-
-
-
-
+    <%= form_with url: quick_log_recipe_path(recipe), method: :post, data: { turbo_frame: "_top", recipe_id: recipe.id, action: "submit->sandbox#quickLog" } do |f| %>
       <div>
         <p style="text-align: center;">
-          <%= f.number_field :dose, value: latest.dose, step: 0.1, style: "width: auto; display: inline-block;", 
+          <%= f.number_field :dose, value: base_dose, step: 0.1, style: "width: auto; display: inline-block;", 
                 data: { brew_adjust_target: "doseInput", action: "input->brew-adjust#manualDose" } %>
         </p>
         <p style="display: flex; justify-content: center; gap: 6px; flex-wrap: nowrap;">
@@ -25,17 +23,11 @@
         </p>
       </div>
 
-
-
-
       <br>
-
-
-
 
       <div>
         <p style="text-align: center;">
-          <%= f.number_field :grind, value: latest.grind, step: 0.1, style: "width: auto; display: inline-block;", 
+          <%= f.number_field :grind, value: base_grind, step: 0.1, style: "width: auto; display: inline-block;", 
                 data: { brew_adjust_target: "grindInput", action: "input->brew-adjust#manualGrind" } %>
         </p>
         <p style="display: flex; justify-content: center; gap: 6px; flex-wrap: nowrap;">
@@ -47,17 +39,11 @@
         </p>
       </div>
 
-
-
       <br>
-
-
 
       <p>
         <%= f.submit "SAVE" %>
       </p>
-
     <% end %>
   </div>
-  
 <% end %>

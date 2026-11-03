@@ -3,8 +3,11 @@ Rails.application.routes.draw do
   post 'login', to: 'sessions#create'
   delete 'logout', to: 'sessions#destroy'
   
-  resources :beans do
+  get 'settings', to: 'settings#show'
+  patch 'settings', to: 'settings#update'
+  delete 'purge_data', to: 'data#purge'
 
+  resources :beans do
     collection do
       get :archived
       patch :sort
@@ -14,21 +17,25 @@ Rails.application.routes.draw do
       patch :archive
       patch :update_freeze
     end
-
   end
 
-  resources :baskets
+  resources :baskets do
+    collection do
+      patch :sort
+    end
+  end
   
   resources :recipes do
+    collection do
+      patch :sort
+    end
 
     member do
       post :quick_log
     end
 
     resources :brews
-
   end
   
   root "recipes#index"
-  
 end

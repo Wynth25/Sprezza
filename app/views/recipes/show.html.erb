@@ -10,8 +10,12 @@
     
     <h3><%= @recipe.basket.name %> • <%= @recipe.style %></h3>
     
-    <h1>
-      <%= @recipe.latest_brew.dose %>g, <%= @recipe.latest_brew.grind %>
+    <h1 id="recipe-latest-stat">
+      <% if @recipe.latest_brew %>
+        <span class="stat-dose"><%= @recipe.latest_brew.dose %></span>g, <span class="stat-grind"><%= @recipe.latest_brew.grind %></span>
+      <% else %>
+        <span class="stat-dose">18.0</span>g, <span class="stat-grind">4.0</span>
+      <% end %>
     </h1>
   </div>
 
@@ -24,18 +28,18 @@
 
   <div>
     <h3>Brew History</h3>
-    <% if @recipe.brews.any? %>
-      <ul>
+    <ul id="brew-history-list">
+      <% if @recipe.brews.any? %>
         <% @recipe.brews.order(created_at: :desc).each do |brew| %>
           <li>
             <strong><%= brew.created_at.strftime("%b %d, %Y - %H:%M") %></strong> <br>
-            Dose: <%= brew.dose %>g | Grind: <%= brew.grind %>
+            Dose: <span class="history-dose"><%= brew.dose %></span>g | Grind: <span class="history-grind"><%= brew.grind %></span>
           </li>
           <br>
         <% end %>
-      </ul>
-    <% else %>
-      <p>No adjustments saved yet.</p>
-    <% end %>
+      <% else %>
+        <li class="empty-history"><p>No adjustments saved yet.</p></li>
+      <% end %>
+    </ul>
   </div>
 </div>

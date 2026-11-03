@@ -1,8 +1,7 @@
 <div class="page-header">
-  <%# Back button: Shown automatically unless hide_back: true or back_path: false %>
-  <% unless local_assigns[:hide_back] || local_assigns[:back_path] == false %>
-    <%= link_to local_assigns.fetch(:back_path, root_path), class: "back-btn" do %>
-      <i class="fa-solid fa-arrow-left"></i> <%= local_assigns.fetch(:back_label, "Back to Recipes") %>
+  <% if local_assigns[:show_back] && local_assigns[:back_path].present? %>
+    <%= link_to local_assigns[:back_path], class: "back-btn" do %>
+      <i class="fa-solid fa-arrow-left"></i> <%= local_assigns.fetch(:back_label, "Back") %>
     <% end %>
   <% end %>
 
@@ -11,7 +10,7 @@
     <h1 class="page-title"><%= title %></h1>
 
     <% if local_assigns[:action].present? %>
-      <div style="display: flex; align-items: center; gap: 10px;">
+      <div style="display: flex; align-items: center; gap: 8px;">
         <%= action %>
       </div>
     <% end %>

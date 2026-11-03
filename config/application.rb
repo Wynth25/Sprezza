@@ -6,6 +6,19 @@ require "rails/all"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+# Automatically load .env file in development and test environments if present
+env_file = File.expand_path("../.env", __dir__)
+if File.exist?(env_file)
+  File.foreach(env_file) do |line|
+    line = line.strip
+    next if line.empty? || line.start_with?("#")
+    key, val = line.split("=", 2)
+    if key && val
+      ENV[key.strip] ||= val.strip.gsub(/\A["']|["']\z/, '')
+    end
+  end
+end
+
 module EspressoDialer
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
@@ -17,13 +30,5 @@ module EspressoDialer
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks])
-
-    # Configuration for the application, engines, and railties goes here.
-    #
-    # These settings can be overridden in specific environments using the files
-    # in config/environments, which are processed later.
-    #
-    # config.time_zone = "Central Time (US & Canada)"
-    # config.eager_load_paths << Rails.root.join("extras")
   end
 end

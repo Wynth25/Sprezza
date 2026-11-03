@@ -3,37 +3,44 @@ class SessionsController < ApplicationController
   end
 
   def create
-    # Extract any possible password param
-    submitted_password = params[:password] || 
-                         params.dig(:session, :password) || 
-                         params.values.find { |v| v.is_a?(Hash) && v[:password] }&.dig(:password)
-    
-    expected_password = ENV["ADMIN_PASSWORD"]
+    submitted_password = (params[:password] || params.dig(:session, :password)).to_s
+    expected_password = load_expected_password.to_s
 
-    # DIAGNOSTIC 1: Is Docker passing the ENV variable?
     if expected_password.blank?
-      flash.now[:alert] = "DEBUG: ENV['ADMIN_PASSWORD'] is empty or not loaded."
-      return render :new, status: :unprocessable_entity
-    end
-
-    # DIAGNOSTIC 2: Did the form send data?
-    if submitted_password.blank?
-      flash.now[:alert] = "DEBUG: Form did not send a password parameter."
-      return render :new, status: :unprocessable_entity
-    end
-
-    # DIAGNOSTIC 3: Password Comparison
-    if submitted_password.to_s.strip == expected_password.to_s.strip
+      flash.now[:alert] = "ADMIN_PASSWORD is not configured."
+      render :new, status: :unprocessable_entity
+    elsif ActiveSupport::SecurityUtils.secure_compare(submitted_password.strip, expected_password.strip)
       session[:admin_id] = "admin_authorized"
-      redirect_to root_path, notice: "Admin mode unlocked! (Session set)"
+      cookies.permanent.encrypted[:admin_auth] = "admin_authorized"
+      redirect_to root_path, notice: "Admin mode unlocked! Device remembered."
     else
-      flash.now[:alert] = "DEBUG: Password mismatch. Submitted length: #{submitted_password.to_s.strip.length} chars, Expected length: #{expected_password.to_s.strip.length} chars."
+      flash.now[:alert] = "Invalid password."
       render :new, status: :unprocessable_entity
     end
   end
 
   def destroy
     session[:admin_id] = nil
+    cookies.delete(:admin_auth)
     redirect_to root_path, notice: "Logged out. Switched to Sandbox mode."
+  end
+
+  private
+
+  def load_expected_password
+    return ENV["ADMIN_PASSWORD"] if ENV["ADMIN_PASSWORD"].present?
+    return Rails.application.credentials.admin_password if Rails.application.credentials.try(:admin_password).present?
+
+    # Direct fallback: parse .env in project root
+    env_file = Rails.root.join(".env")
+    if File.exist?(env_file)
+      File.foreach(env_file) do |line|
+        line = line.strip
+        next if line.empty? || line.start_with?("#")
+        k, v = line.split("=", 2)
+        return v.strip.gsub(/\A["']|["']\z/, '') if k&.strip == "ADMIN_PASSWORD"
+      end
+    end
+    nil
   end
 end

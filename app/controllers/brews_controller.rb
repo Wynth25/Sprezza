@@ -1,5 +1,6 @@
 class BrewsController < ApplicationController
   before_action :set_brew, only: %i[ show edit update destroy ]
+  before_action :require_admin!, only: %i[ create update destroy ]
 
   # GET /brews or /brews.json
   def index
@@ -58,13 +59,12 @@ class BrewsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_brew
-      @brew = Brew.find(params.expect(:id))
-    end
 
-    # Only allow a list of trusted parameters through.
-    def brew_params
-      params.require(:brew).permit(:recipe_id, :dose, :grind)
-    end
+  def set_brew
+    @brew = Brew.find(params[:id])
+  end
+
+  def brew_params
+    params.require(:brew).permit(:recipe_id, :dose, :grind)
+  end
 end
