@@ -36,3 +36,5 @@
 # DATABASEESS
 /db/admin_*.sqlite3
 /db/sandbox_*.sqlite3
+# Local project memory / agent documentation
+PROJECT_MEMORY.md
