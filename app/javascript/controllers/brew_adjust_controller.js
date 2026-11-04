@@ -41,13 +41,16 @@ export default class extends Controller {
     const diff = isNaN(current) ? 0 : parseFloat((current - this.baseDoseValue).toFixed(2))
     const isChanged = !isNaN(current) && Math.abs(current - this.baseDoseValue) >= 0.01
 
-    const isOutOfRange = isNaN(current) || current < 0 || current > 99.9
-
     let matchedBtn = null
     this.doseBtnTargets.forEach(btn => {
       const btnAmount = parseFloat(btn.dataset.amount)
-      btn.disabled = isOutOfRange
-      if (isChanged && !isOutOfRange && Math.abs(diff - btnAmount) < 0.01) {
+      const targetVal = parseFloat((this.baseDoseValue + btnAmount).toFixed(1))
+      
+      // Only disable this specific button if clicking it would exceed 99.9 or drop below 0
+      const wouldBeOutOfRange = targetVal < 0 || targetVal > 99.9
+      btn.disabled = wouldBeOutOfRange
+
+      if (isChanged && !wouldBeOutOfRange && Math.abs(diff - btnAmount) < 0.01) {
         btn.classList.add("active")
         matchedBtn = btn
       } else {
@@ -105,13 +108,16 @@ export default class extends Controller {
     const diff = isNaN(current) ? 0 : parseFloat((current - this.baseGrindValue).toFixed(2))
     const isChanged = !isNaN(current) && Math.abs(current - this.baseGrindValue) >= 0.01
 
-    const isOutOfRange = isNaN(current) || current < 0 || current > 99.9
-
     let matchedBtn = null
     this.grindBtnTargets.forEach(btn => {
       const btnAmount = parseFloat(btn.dataset.amount)
-      btn.disabled = isOutOfRange
-      if (isChanged && !isOutOfRange && Math.abs(diff - btnAmount) < 0.01) {
+      const targetVal = parseFloat((this.baseGrindValue + btnAmount).toFixed(1))
+      
+      // Only disable this specific button if clicking it would exceed 99.9 or drop below 0
+      const wouldBeOutOfRange = targetVal < 0 || targetVal > 99.9
+      btn.disabled = wouldBeOutOfRange
+
+      if (isChanged && !wouldBeOutOfRange && Math.abs(diff - btnAmount) < 0.01) {
         btn.classList.add("active")
         matchedBtn = btn
       } else {

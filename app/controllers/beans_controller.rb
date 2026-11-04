@@ -41,7 +41,14 @@ class BeansController < ApplicationController
   def update
     respond_to do |format|
       if @bean.update(bean_params)
-        format.html { redirect_back fallback_location: beans_path, notice: "Bean was successfully updated.", status: :see_other }
+        notice_message = if bean_params.key?(:frozen_on) || bean_params.key?(:freeze_date)
+                           "Date saved"
+                         elsif bean_params.key?(:archived)
+                           @bean.archived ? "Bean archived" : "Bean restored"
+                         else
+                           "Bean saved"
+                         end
+        format.html { redirect_back fallback_location: beans_path, notice: notice_message, status: :see_other }
         format.json { render :show, status: :ok, location: @bean }
       else
         format.html { render :edit, status: :unprocessable_content }
@@ -63,7 +70,7 @@ class BeansController < ApplicationController
   def update_freeze
     @bean = Bean.find(params[:id])
     @bean.update(frozen_on: params[:freeze_date], freeze_date: params[:freeze_date])
-    redirect_to beans_path, notice: "Freeze date updated."
+    redirect_to beans_path, notice: "Date saved"
   end
 
   def destroy

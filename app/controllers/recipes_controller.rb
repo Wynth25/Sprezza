@@ -52,7 +52,7 @@ class RecipesController < ApplicationController
     new_grind = params[:grind].to_f.round(1)
 
     @recipe.brews.create!(dose: new_dose, grind: new_grind)
-    redirect_to root_path, notice: "Brew successfully logged!"
+    redirect_to root_path, notice: "Brewed!"
   end
 
   def sort

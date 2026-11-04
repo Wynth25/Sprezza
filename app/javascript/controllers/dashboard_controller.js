@@ -297,7 +297,7 @@ export default class extends Controller {
         const menu = form.closest(".freeze-menu")
         if (menu) menu.classList.add("hidden")
         if (this.hasBackdropTarget) this.backdropTarget.classList.add("hidden")
-        sandbox.showToast("Freeze date saved (Sandbox)!")
+        sandbox.showToast("Date saved")
       }
     }
   }

@@ -238,7 +238,7 @@ export default class extends Controller {
       historyList.prepend(li)
     }
 
-    this.showToast("Brew saved in your Sandbox session!")
+    this.showToast("Brewed!")
   }
 
   deleteRecipe(event) {
