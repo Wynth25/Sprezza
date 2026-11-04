@@ -41,7 +41,7 @@
                   class: "dose-range-num-input", 
                   data: { 
                     double_slider_target: "minInput", 
-                    action: "input->double-slider#onInputChange" 
+                    action: "input->double-slider#onMinInputChange change->double-slider#onMinInputCommit blur->double-slider#onMinInputCommit" 
                   } %>
             <span class="dose-range-unit">g</span>
           </div>
@@ -62,7 +62,7 @@
                   class: "dose-range-num-input", 
                   data: { 
                     double_slider_target: "maxInput", 
-                    action: "input->double-slider#onInputChange" 
+                    action: "input->double-slider#onMaxInputChange change->double-slider#onMaxInputCommit blur->double-slider#onMaxInputCommit" 
                   } %>
             <span class="dose-range-unit">g</span>
           </div>
