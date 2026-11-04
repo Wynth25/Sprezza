@@ -1,6 +1,6 @@
 class BrewsController < ApplicationController
-  before_action :set_brew, only: %i[ show edit update destroy ]
-  before_action :require_admin!, only: %i[ create update destroy ]
+  before_action :set_brew, only: %i[ show edit update destroy toggle_star ]
+  before_action :require_admin!, only: %i[ create update destroy toggle_star ]
 
   # GET /brews or /brews.json
   def index
@@ -58,6 +58,20 @@ class BrewsController < ApplicationController
     end
   end
 
+  # PATCH /brews/1/toggle_star
+  def toggle_star
+    new_star = params.key?(:star) ? ActiveModel::Type::Boolean.new.cast(params[:star]) : !@brew.star
+
+    if @brew.has_attribute?(:star)
+      @brew.update(star: new_star)
+    end
+
+    respond_to do |format|
+      format.json { render json: { id: @brew.id, star: (@brew.has_attribute?(:star) ? @brew.star : new_star) } }
+      format.html { redirect_back fallback_location: root_path }
+    end
+  end
+
   private
 
   def set_brew
@@ -65,6 +79,6 @@ class BrewsController < ApplicationController
   end
 
   def brew_params
-    params.require(:brew).permit(:recipe_id, :dose, :grind)
+    params.require(:brew).permit(:recipe_id, :dose, :grind, :star, :notes)
   end
 end

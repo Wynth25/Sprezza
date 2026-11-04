@@ -25,19 +25,66 @@
   <hr>
 
   <div>
-    <h3>Brew History</h3>
-    <ul id="brew-history-list">
+    <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--header-brown); margin: 24px 0 12px 0;">Brew History</h3>
+    <div id="brew-history-list" class="brew-history-list">
       <% if @recipe.brews.any? %>
         <% @recipe.brews.order(created_at: :desc).each do |brew| %>
-          <li>
-            <strong><%= brew.created_at.strftime("%b %d, %Y - %H:%M") %></strong> <br>
-            Dose: <span class="history-dose"><%= brew.dose %></span>g | Grind: <span class="history-grind"><%= brew.grind %></span>
-          </li>
-          <br>
+          <% 
+            is_current_year = brew.created_at.year == Time.current.year
+            date_formatted = is_current_year ? brew.created_at.strftime("%-d.%-m %H:%M") : brew.created_at.strftime("%-d.%-m.%Y %H:%M")
+            days_ago = (Date.current - brew.created_at.to_date).to_i
+            age_formatted = if days_ago <= 0
+              "Today"
+            elsif days_ago == 1
+              "1 day since"
+            else
+              "#{days_ago} days since"
+            end
+            is_starred = brew.respond_to?(:star) && brew.star?
+            brew_notes = brew.respond_to?(:notes) ? brew.notes.presence : nil
+          %>
+          <div class="history-card <%= 'starred' if is_starred %>" data-brew-id="<%= brew.id %>">
+            <div class="history-card-main">
+              <div class="history-card-stats">
+                <div class="recipe-stat recipe-stat-dose"><%= brew.dose %><small>g</small></div>
+                <div class="recipe-stat recipe-stat-grind"><%= brew.grind %><i class="fa-solid fa-gear"></i></div>
+              </div>
+
+              <div class="history-card-divider-v"></div>
+
+              <div class="history-card-info">
+                <div class="history-card-date"><%= date_formatted %></div>
+                <div class="history-card-age"><%= age_formatted %></div>
+              </div>
+
+              <div class="history-card-actions">
+                <button type="button" class="action-icon-btn history-action-btn" title="Edit Brew">
+                  <i class="fa-solid fa-pencil"></i>
+                </button>
+                <button type="button" 
+                        class="action-icon-btn history-action-btn <%= 'starred' if is_starred %>" 
+                        title="<%= is_starred ? 'Starred' : 'Star Brew' %>"
+                        data-controller="brew-star"
+                        data-brew-star-url-value="<%= toggle_star_brew_path(brew) %>"
+                        data-brew-star-starred-value="<%= is_starred ? 'true' : 'false' %>"
+                        data-brew-star-brew-id-value="<%= brew.id %>"
+                        data-action="click->brew-star#toggle">
+                  <i class="<%= is_starred ? 'fa-solid fa-star' : 'fa-regular fa-star' %>"></i>
+                </button>
+              </div>
+            </div>
+
+            <% if brew_notes.present? %>
+              <div class="history-card-divider-h"></div>
+              <div class="history-card-notes">
+                <%= brew_notes %>
+              </div>
+            <% end %>
+          </div>
         <% end %>
       <% else %>
-        <li class="empty-history"><p>No adjustments saved yet.</p></li>
+        <div class="empty-history"><p style="color: #888; font-style: italic;">No adjustments saved yet.</p></div>
       <% end %>
-    </ul>
+    </div>
   </div>
 </div>

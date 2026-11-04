@@ -901,8 +901,8 @@ input[type="date"] {
   box-shadow: 0 2px 8px rgba(56, 46, 36, 0.2);
 }
 
-/* Extra spacing: lift the dose slightly away from the grind */
-.recipe-stat-dose {
+/* Extra spacing: lift the dose slightly away from the grind on dashboard cards */
+.recipe-grid .recipe-stat-dose {
   transform: translateY(-0.5em);
 }
 
@@ -1136,6 +1136,118 @@ input[type="date"] {
   font-size: 1rem;
   font-weight: 700;
   border-radius: 20px;
+}
+
+/* Dial Action Controls: Notes (Left) | Brew (Center) | Return/Discard (Right) */
+.dial-actions-container {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.dial-actions-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  width: 100%;
+  max-width: 320px;
+}
+
+.dial-slot-left {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 12px;
+}
+
+.dial-slot-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dial-slot-right {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding-left: 12px;
+}
+
+.dial-brew-btn {
+  margin: 0 !important;
+}
+
+.dial-action-icon-btn {
+  height: 42px;
+  box-sizing: border-box;
+  margin: 0 !important;
+}
+
+.dial-notes-btn {
+  background-color: var(--card-cream);
+  color: var(--text-brown);
+  border: 2px solid var(--btn-bg);
+  border-radius: 20px;
+  padding: 10px 16px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s, transform 0.1s;
+}
+
+.dial-notes-btn:hover {
+  border-color: var(--accent);
+  background-color: var(--btn-hover);
+}
+
+.dial-notes-btn:active {
+  transform: scale(0.97);
+}
+
+.dial-notes-btn.active {
+  background-color: #c9d6b2 !important;
+  border-color: #9cb37e !important;
+  color: var(--text-brown) !important;
+}
+
+.dial-return-btn {
+  min-width: 44px;
+}
+
+.dial-notes-box {
+  margin-top: 14px;
+  width: 100%;
+  max-width: 320px;
+}
+
+.dial-notes-box.hidden {
+  display: none !important;
+}
+
+.dial-notes-input {
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 12px;
+  border: 2px solid var(--btn-bg);
+  background-color: var(--card-cream);
+  color: var(--text-brown);
+  padding: 10px 14px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.dial-notes-input:focus {
+  border-color: var(--accent);
 }
 
 /* Responsive adjustments for narrow screens (under 440px) */
@@ -1450,6 +1562,127 @@ input[type="date"] {
 .btn-discard-active:active {
   transform: scale(0.97) !important;
 }
+
+/* Brew History Cards */
+.brew-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.history-card {
+  background-color: var(--card-cream);
+  border: 2px solid var(--btn-bg);
+  border-radius: 16px;
+  padding: 12px 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+  position: relative;
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.history-card.starred {
+  background-color: #f5ede4;
+  border-color: var(--btn-hover);
+  box-shadow: 0 3px 8px rgba(56, 46, 36, 0.07);
+}
+
+.history-card-main {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.history-card-stats {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  min-width: 68px;
+  padding-right: 12px;
+  flex-shrink: 0;
+  gap: 4px;
+}
+
+.history-card-stats .recipe-stat {
+  font-size: 1.45rem !important;
+  line-height: 1.2 !important;
+  margin: 0 !important;
+  transform: none !important;
+}
+
+.history-card-stats .recipe-stat-dose,
+.history-card-stats .recipe-stat-grind {
+  transform: none !important;
+  margin: 0 !important;
+}
+
+.history-card-divider-v {
+  width: 1.5px;
+  background-color: var(--btn-bg);
+  align-self: stretch;
+  margin: 4px 14px;
+  border-radius: 1px;
+  flex-shrink: 0;
+}
+
+.history-card-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
+.history-card-date {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--header-brown);
+  line-height: 1.2;
+}
+
+.history-card-age {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-brown);
+  line-height: 1.2;
+}
+
+.history-card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.history-action-btn.starred {
+  background-color: var(--btn-hover);
+}
+
+.history-action-btn.starred i {
+  color: var(--header-brown);
+}
+
+.history-card-divider-h {
+  height: 1.5px;
+  background-color: var(--btn-bg);
+  margin: 10px 0 8px 0;
+  width: 100%;
+  border-radius: 1px;
+}
+
+.history-card-notes {
+  font-size: 0.95rem;
+  color: var(--text-brown);
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
 
 
 

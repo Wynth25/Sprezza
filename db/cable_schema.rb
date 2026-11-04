@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_03_193500) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_05_005000) do
   create_table "baskets", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "guest_token"
@@ -43,7 +43,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_03_193500) do
     t.float "dose"
     t.float "grind"
     t.string "guest_token"
+    t.text "notes"
     t.integer "recipe_id", null: false
+    t.boolean "star", default: false
     t.datetime "updated_at", null: false
     t.index ["guest_token"], name: "index_brews_on_guest_token"
     t.index ["recipe_id"], name: "index_brews_on_recipe_id"
@@ -55,7 +57,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_03_193500) do
     t.integer "bean_id", null: false
     t.datetime "created_at", null: false
     t.string "guest_token"
+    t.text "notes"
     t.integer "position"
+    t.boolean "star", default: false
     t.string "style"
     t.datetime "updated_at", null: false
     t.index ["basket_id"], name: "index_recipes_on_basket_id"

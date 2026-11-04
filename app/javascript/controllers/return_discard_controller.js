@@ -8,7 +8,7 @@ export default class extends Controller {
   connect() {
     this.form = this.element.closest("form")
     this.pressCount = 0
-    this.dirty = false
+    this.originalHtml = this.element.innerHTML
 
     this.boundDocClick = this.onDocumentClick.bind(this)
     this.boundFormInput = this.onFormInput.bind(this)
@@ -43,22 +43,30 @@ export default class extends Controller {
   }
 
   onFormInput() {
-    this.dirty = true
-    if (this.pressCount === 1) {
+    if (this.pressCount === 1 && !this.hasChanges()) {
       this.setReturnState()
     }
   }
 
   hasChanges() {
-    if (this.dirty) return true
     if (!this.form || !this.initialValues) return false
 
     const inputs = this.form.querySelectorAll("input:not([type=hidden]):not([type=submit]):not([type=button]), textarea, select")
     for (const input of inputs) {
       const key = input.name || input.id
       if (key && this.initialValues.has(key)) {
-        if (input.value !== this.initialValues.get(key)) {
-          return true
+        const initial = this.initialValues.get(key)
+        if (input.type === "number") {
+          const numVal = parseFloat(input.value)
+          const numInit = parseFloat(initial)
+          if (isNaN(numVal) && isNaN(numInit)) continue
+          if (isNaN(numVal) || isNaN(numInit) || Math.abs(numVal - numInit) >= 0.001) {
+            return true
+          }
+        } else {
+          if (input.value !== initial) {
+            return true
+          }
         }
       }
     }
@@ -93,7 +101,7 @@ export default class extends Controller {
 
   setReturnState() {
     this.pressCount = 0
-    this.element.textContent = "Return"
+    this.element.innerHTML = this.originalHtml
     this.element.classList.remove("btn-discard-active")
     this.element.classList.add("btn-return-subtle")
   }

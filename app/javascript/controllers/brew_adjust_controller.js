@@ -1,12 +1,27 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = [ "doseInput", "grindInput", "doseBtn", "grindBtn", "doseResetBtn", "grindResetBtn" ]
+  static targets = [ "doseInput", "grindInput", "doseBtn", "grindBtn", "doseResetBtn", "grindResetBtn", "notesBox", "notesBtn" ]
   static values = { baseDose: Number, baseGrind: Number }
 
   connect() {
     this.checkDoseUI()
     this.checkGrindUI()
+  }
+
+  toggleNotes(event) {
+    if (event) event.preventDefault()
+    if (this.hasNotesBoxTarget) {
+      this.notesBoxTarget.classList.toggle("hidden")
+      const isVisible = !this.notesBoxTarget.classList.contains("hidden")
+      if (this.hasNotesBtnTarget) {
+        this.notesBtnTarget.classList.toggle("active", isVisible)
+      }
+      if (isVisible) {
+        const input = this.notesBoxTarget.querySelector("textarea, input")
+        if (input) input.focus()
+      }
+    }
   }
 
   // --- DOSE ACTIONS ---
@@ -22,6 +37,7 @@ export default class extends Controller {
       this.resetDose()
     } else {
       this.doseInputTarget.value = targetVal.toFixed(1)
+      this.doseInputTarget.dispatchEvent(new Event("input", { bubbles: true }))
       this.checkDoseUI()
     }
   }
@@ -33,6 +49,7 @@ export default class extends Controller {
   resetDose(event) {
     if (event) event.preventDefault()
     this.doseInputTarget.value = this.baseDoseValue.toFixed(1)
+    this.doseInputTarget.dispatchEvent(new Event("input", { bubbles: true }))
     this.checkDoseUI()
   }
 
@@ -89,6 +106,7 @@ export default class extends Controller {
       this.resetGrind()
     } else {
       this.grindInputTarget.value = targetVal.toFixed(1)
+      this.grindInputTarget.dispatchEvent(new Event("input", { bubbles: true }))
       this.checkGrindUI()
     }
   }
@@ -100,6 +118,7 @@ export default class extends Controller {
   resetGrind(event) {
     if (event) event.preventDefault()
     this.grindInputTarget.value = this.baseGrindValue.toFixed(1)
+    this.grindInputTarget.dispatchEvent(new Event("input", { bubbles: true }))
     this.checkGrindUI()
   }
 

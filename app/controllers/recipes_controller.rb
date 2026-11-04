@@ -50,9 +50,10 @@ class RecipesController < ApplicationController
   def quick_log
     new_dose = params[:dose].to_f.round(1)
     new_grind = params[:grind].to_f.round(1)
+    brew_notes = params[:brew_notes].presence || params[:notes].presence
 
-    @recipe.brews.create!(dose: new_dose, grind: new_grind)
-    redirect_to root_path, notice: "Brewed!"
+    @recipe.brews.create!(dose: new_dose, grind: new_grind, notes: brew_notes)
+    redirect_back fallback_location: root_path, notice: "Brewed!"
   end
 
   def sort
@@ -71,6 +72,6 @@ class RecipesController < ApplicationController
   end
 
   def recipe_params
-    params.require(:recipe).permit(:bean_id, :basket_id, :style, :archived, :position)
+    params.require(:recipe).permit(:bean_id, :basket_id, :style, :archived, :position, :star, :notes)
   end
 end

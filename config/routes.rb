@@ -36,6 +36,8 @@ Rails.application.routes.draw do
 
     resources :brews
   end
+
+  patch "brews/:id/toggle_star", to: "brews#toggle_star", as: :toggle_star_brew
   
   root "recipes#index"
 end

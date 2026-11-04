@@ -77,8 +77,38 @@
 
       </div>
 
-      <div class="dial-save-container">
-        <%= f.submit "SAVE", class: "btn-primary dial-save-btn" %>
+      <div class="dial-actions-container">
+        <div class="dial-actions-row">
+          <div class="dial-action-slot dial-slot-left">
+            <button type="button" 
+                    class="dial-action-icon-btn dial-notes-btn" 
+                    data-brew-adjust-target="notesBtn"
+                    data-action="click->brew-adjust#toggleNotes" 
+                    title="Add notes">
+              <i class="fa-solid fa-pen-to-square"></i>
+            </button>
+          </div>
+
+          <div class="dial-action-slot dial-slot-center">
+            <%= f.submit "Brew", class: "btn-primary dial-save-btn dial-brew-btn" %>
+          </div>
+
+          <div class="dial-action-slot dial-slot-right">
+            <button type="button" 
+                    class="btn-return-subtle dial-action-icon-btn dial-return-btn" 
+                    data-controller="return-discard"
+                    data-return-discard-return-url-value="<%= recipes_path %>"
+                    data-action="click->return-discard#handleClick"
+                    title="Return">
+              <i class="fa-solid fa-arrow-left"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Collapsible Notes Box Below -->
+        <div class="dial-notes-box hidden" data-brew-adjust-target="notesBox">
+          <textarea name="brew_notes" class="dial-notes-input" placeholder="Tasting notes, grind observations..." rows="3"></textarea>
+        </div>
       </div>
     <% end %>
   </div>
