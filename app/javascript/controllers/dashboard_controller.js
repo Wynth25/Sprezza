@@ -50,11 +50,11 @@ export default class extends Controller {
     this.initialBasketOrder = []
     this.initialRecipeOrders = new Map()
 
-    // 4. Highlight and scroll to targeted bean
+    // 4. Instant jump and highlight targeted bean without scrolling animation
     if (window.location.hash) {
       const targetBean = document.querySelector(window.location.hash)
       if (targetBean && targetBean.classList.contains("bean-card")) {
-        targetBean.scrollIntoView({ behavior: "smooth", block: "center" })
+        targetBean.scrollIntoView({ behavior: "instant", block: "center" })
         void targetBean.offsetWidth
         targetBean.classList.add("highlight-target")
       }
