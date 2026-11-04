@@ -48,7 +48,7 @@ class BeansController < ApplicationController
                          else
                            "Bean saved"
                          end
-        format.html { redirect_back fallback_location: beans_path, notice: notice_message, status: :see_other }
+        format.html { redirect_to beans_path, notice: notice_message, status: :see_other }
         format.json { render :show, status: :ok, location: @bean }
       else
         format.html { render :edit, status: :unprocessable_content }

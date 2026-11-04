@@ -94,8 +94,15 @@
 
     <br>
     
-    <p>
+    <div style="display: flex; gap: 12px; align-items: center; margin-top: 10px;">
       <%= form.submit "Save Basket", data: { double_slider_target: "submitBtn" } %>
-    </p>
+      <button type="button" 
+              class="btn-return-subtle" 
+              data-controller="return-discard"
+              data-return-discard-return-url-value="<%= baskets_path %>"
+              data-action="click->return-discard#handleClick">
+        Return
+      </button>
+    </div>
   </div>
 <% end %>

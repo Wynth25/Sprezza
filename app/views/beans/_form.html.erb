@@ -38,8 +38,15 @@
 
     <br>
 
-    <p>
+    <div style="display: flex; gap: 12px; align-items: center;">
       <%= form.submit "Save Bean" %>
-    </p>
+      <button type="button" 
+              class="btn-return-subtle" 
+              data-controller="return-discard"
+              data-return-discard-return-url-value="<%= beans_path %>"
+              data-action="click->return-discard#handleClick">
+        Return
+      </button>
+    </div>
   </div>
 <% end %>
