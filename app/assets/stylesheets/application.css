@@ -1397,49 +1397,58 @@ input[type="date"] {
 }
 
 /* ==========================================================================
-   Return & Discard Button States
+   Return & Discard Button States (matches pill button style)
    ========================================================================== */
 .btn-return-subtle {
-  background-color: #fde8e8 !important;
-  color: #c02636 !important;
-  border: 1.5px solid #f8b4b4 !important;
-  border-radius: 12px;
-  padding: 10px 20px;
-  font-weight: 700;
-  font-size: 0.95rem;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  background-color: #fce8e8 !important;
+  color: #b91c1c !important;
+  border: none !important;
+  border-radius: 20px !important;
+  padding: 10px 16px !important;
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  font-family: inherit !important;
+  margin: 4px 2px !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04) !important;
+  transition: background-color 0.2s, transform 0.1s !important;
 }
 
 .btn-return-subtle:hover {
   background-color: #fbd5d5 !important;
-  border-color: #f09595 !important;
+}
+
+.btn-return-subtle:active {
+  transform: scale(0.97) !important;
 }
 
 .btn-discard-active {
   background-color: #dc2626 !important;
   color: #ffffff !important;
-  border: 1.5px solid #b91c1c !important;
-  border-radius: 12px;
-  padding: 10px 20px;
-  font-weight: 800;
-  font-size: 0.95rem;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.35);
-  transform: scale(1.02);
+  border: none !important;
+  border-radius: 20px !important;
+  padding: 10px 16px !important;
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  font-family: inherit !important;
+  margin: 4px 2px !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.35) !important;
+  transition: background-color 0.2s, transform 0.1s !important;
 }
 
 .btn-discard-active:hover {
   background-color: #b91c1c !important;
-  border-color: #991b1b !important;
+}
+
+.btn-discard-active:active {
+  transform: scale(0.97) !important;
 }
 
 

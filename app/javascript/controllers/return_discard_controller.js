@@ -8,17 +8,17 @@ export default class extends Controller {
   connect() {
     this.form = this.element.closest("form")
     this.pressCount = 0
+    this.dirty = false
+
     this.boundDocClick = this.onDocumentClick.bind(this)
     this.boundFormInput = this.onFormInput.bind(this)
 
-    // Capture initial form state after standard initialization
-    setTimeout(() => {
-      this.initialState = this.getFormData()
-    }, 50)
+    this.captureInitialValues()
 
     document.addEventListener("click", this.boundDocClick)
     if (this.form) {
       this.form.addEventListener("input", this.boundFormInput)
+      this.form.addEventListener("change", this.boundFormInput)
     }
   }
 
@@ -26,23 +26,43 @@ export default class extends Controller {
     document.removeEventListener("click", this.boundDocClick)
     if (this.form) {
       this.form.removeEventListener("input", this.boundFormInput)
+      this.form.removeEventListener("change", this.boundFormInput)
     }
   }
 
-  getFormData() {
-    if (!this.form) return ""
-    const formData = new FormData(this.form)
-    const entries = []
-    for (const [key, value] of formData.entries()) {
-      if (key === "authenticity_token" || key === "_method") continue
-      entries.push(`${key}=${value}`)
+  captureInitialValues() {
+    if (!this.form) return
+    this.initialValues = new Map()
+    const inputs = this.form.querySelectorAll("input:not([type=hidden]):not([type=submit]):not([type=button]), textarea, select")
+    inputs.forEach(input => {
+      const key = input.name || input.id
+      if (key) {
+        this.initialValues.set(key, input.value)
+      }
+    })
+  }
+
+  onFormInput() {
+    this.dirty = true
+    if (this.pressCount === 1) {
+      this.setReturnState()
     }
-    return entries.sort().join("&")
   }
 
   hasChanges() {
-    if (this.initialState === undefined) return false
-    return this.getFormData() !== this.initialState
+    if (this.dirty) return true
+    if (!this.form || !this.initialValues) return false
+
+    const inputs = this.form.querySelectorAll("input:not([type=hidden]):not([type=submit]):not([type=button]), textarea, select")
+    for (const input of inputs) {
+      const key = input.name || input.id
+      if (key && this.initialValues.has(key)) {
+        if (input.value !== this.initialValues.get(key)) {
+          return true
+        }
+      }
+    }
+    return false
   }
 
   handleClick(event) {
@@ -66,15 +86,7 @@ export default class extends Controller {
   }
 
   onDocumentClick(event) {
-    // If in Discard state and user clicks anywhere outside the button, revert back to Return
     if (this.pressCount === 1 && !this.element.contains(event.target)) {
-      this.setReturnState()
-    }
-  }
-
-  onFormInput() {
-    // If form values are restored back to initial, revert button to Return
-    if (this.pressCount === 1 && !this.hasChanges()) {
       this.setReturnState()
     }
   }
