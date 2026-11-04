@@ -29,6 +29,7 @@ body {
   transition: background-color 0.3s ease;
 }
 
+/* Page Container */
 .page-container {
   width: 100%;
 }
@@ -903,4 +904,265 @@ input[type="date"] {
 .recipe-stat-dose {
   transform: translateY(-0.5em);
 }
+
+/* ==========================================================================
+   Recipe Show / Dial Controls Layout
+   ========================================================================== */
+.recipe-dial-container {
+  width: 100%;
+  margin: 0 auto;
+}
+
+.dial-layout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+}
+
+/* Side button columns: fixed positions & uniform sizes */
+.dial-side-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+.dial-btn-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.dial-step-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 38px;
+  box-sizing: border-box;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: 8px;
+  background-color: var(--card-cream);
+  border: 1.5px solid var(--btn-bg);
+  color: var(--text-brown);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.dial-step-btn:hover {
+  border-color: var(--accent);
+}
+
+.dial-step-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  border-color: var(--btn-bg) !important;
+}
+
+.dial-step-btn.active {
+  background-color: #c9d6b2 !important;
+  border-color: #9cb37e !important;
+  color: var(--text-brown) !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  transform: translateY(1px);
+}
+
+/* Center Card: Exact clone of dashboard recipe-card */
+.dial-card.recipe-card {
+  width: 180px;
+  height: 180px;
+  max-width: 180px;
+  max-height: 180px;
+  aspect-ratio: 1 / 1;
+  flex: 0 0 180px;
+  box-sizing: border-box;
+  cursor: default;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.dial-card.recipe-card:hover {
+  border-color: var(--btn-bg);
+  box-shadow: none;
+  transform: none;
+}
+
+.dial-card-title {
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: var(--header-brown);
+  margin-bottom: 0;
+  line-height: 1.1;
+  flex: 1 1 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  word-break: break-word;
+}
+
+.dial-card-stats {
+  flex: 1 1 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding-bottom: 4px;
+  box-sizing: border-box;
+}
+
+/* Fixed-size row inside the card for Dose and Grind */
+.dial-stat-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  line-height: 1;
+}
+
+/* Fixed input box strictly centered inside the row */
+.dial-input-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 38px;
+  box-sizing: border-box;
+  background: transparent;
+  border: 1.5px solid transparent;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.dial-input-box.custom-highlight {
+  background-color: #c9d6b2;
+  border-color: #9cb37e;
+}
+
+.dial-number-input {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--header-brown);
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 0;
+  margin: 0;
+  font-family: inherit;
+  box-sizing: border-box;
+  -moz-appearance: textfield;
+}
+
+.dial-number-input::-webkit-outer-spin-button,
+.dial-number-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.dial-input-box:focus-within {
+  border-color: var(--accent);
+}
+
+/* Units (g and gear) anchored to the right of the center input box without pushing it */
+.dial-unit {
+  position: absolute;
+  left: calc(50% + 43px);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.dial-unit i {
+  font-size: 0.85rem;
+}
+
+/* Reset button (↺) anchored on the LEFT of the center input box without pushing it */
+.dial-reset-btn {
+  position: absolute;
+  right: calc(50% + 43px);
+  background: transparent;
+  border: none;
+  color: var(--accent);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 2px 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.dial-reset-btn:hover {
+  transform: rotate(-45deg);
+  color: var(--header-brown);
+}
+
+.dial-reset-btn.hidden {
+  display: none !important;
+}
+
+.dial-save-container {
+  margin-top: 24px;
+  text-align: center;
+}
+
+.dial-save-btn {
+  padding: 10px 32px;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 20px;
+}
+
+/* Responsive adjustments for narrow screens (under 420px) */
+@media (max-width: 440px) {
+  .dial-layout {
+    gap: 6px;
+  }
+  .dial-step-btn {
+    width: 44px;
+    height: 34px;
+    font-size: 0.75rem;
+  }
+  .dial-card.recipe-card {
+    width: 155px;
+    height: 155px;
+    flex: 0 0 155px;
+    padding: 6px;
+  }
+  .dial-card-title {
+    font-size: 1.1rem;
+  }
+  .dial-input-box {
+    width: 62px;
+    height: 32px;
+  }
+  .dial-number-input {
+    font-size: 1.25rem;
+  }
+  .dial-unit {
+    font-size: 0.85rem;
+    margin-left: 3px;
+  }
+  .dial-reset-btn {
+    font-size: 0.85rem;
+    padding: 1px 2px;
+  }
+}
+
 

@@ -8,15 +8,13 @@
     <p style="overflow-wrap: anywhere; word-break: break-word;">
       <%= @recipe.bean.notes %></p>
     
-    <h3><%= @recipe.basket.name %> • <%= @recipe.style %></h3>
-    
-    <h1 id="recipe-latest-stat">
+    <div id="recipe-latest-stat" style="display: none;">
       <% if @recipe.latest_brew %>
         <span class="stat-dose"><%= @recipe.latest_brew.dose %></span>g, <span class="stat-grind"><%= @recipe.latest_brew.grind %></span>
       <% else %>
         <span class="stat-dose">18.0</span>g, <span class="stat-grind">4.0</span>
       <% end %>
-    </h1>
+    </div>
   </div>
 
   <br>

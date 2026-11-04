@@ -1,103 +1,139 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = [ "doseInput", "grindInput", "doseBtn", "grindBtn" ]
+  static targets = [ "doseInput", "grindInput", "doseBtn", "grindBtn", "doseResetBtn", "grindResetBtn" ]
   static values = { baseDose: Number, baseGrind: Number }
 
   connect() {
-    // On load, select the [OK] buttons (which represent an adjustment of 0)
-    this.updateDoseUI(0)
-    this.updateGrindUI(0)
+    this.checkDoseUI()
+    this.checkGrindUI()
   }
 
   // --- DOSE ACTIONS ---
   selectDose(event) {
     event.preventDefault()
-    // Calculate new dose based on button clicked
     const amount = parseFloat(event.currentTarget.dataset.amount)
-    this.doseInputTarget.value = (this.baseDoseValue + amount).toFixed(1)
     
-    // Update the colors
-    this.updateDoseUI(amount)
-    this.doseInputTarget.style.backgroundColor = ""
-  }
-
-  manualDose() {
+    // Toggle check: if already active, toggle off back to base
     const current = parseFloat(this.doseInputTarget.value)
-    const diff = current - this.baseDoseValue
-    let matched = false
-
-    // Check if what you typed matches one of our preset buttons
-    this.doseBtnTargets.forEach(btn => {
-      const btnAmount = parseFloat(btn.dataset.amount)
-      if (Math.abs(diff - btnAmount) < 0.01) {
-        btn.style.backgroundColor = "#c9d6b2"
-        matched = true
-      } else {
-        btn.style.backgroundColor = ""
-      }
-    })
-
-    // If it's a completely custom number, highlight the input box green
-    if (!matched && current !== this.baseDoseValue) {
-      this.doseInputTarget.style.backgroundColor = "#c9d6b2"
+    const targetVal = parseFloat((this.baseDoseValue + amount).toFixed(1))
+    
+    if (Math.abs(current - targetVal) < 0.01) {
+      this.resetDose()
     } else {
-      this.doseInputTarget.style.backgroundColor = ""
+      this.doseInputTarget.value = targetVal.toFixed(1)
+      this.checkDoseUI()
     }
   }
 
-  updateDoseUI(selectedAmount) {
-    this.doseBtnTargets.forEach(btn => {
-      const btnAmount = parseFloat(btn.dataset.amount)
-      if (btnAmount === selectedAmount) {
-        btn.style.backgroundColor = "#c9d6b2"
-      } else {
-        btn.style.backgroundColor = ""
-      }
-    })
+  manualDose() {
+    this.checkDoseUI()
   }
 
+  resetDose(event) {
+    if (event) event.preventDefault()
+    this.doseInputTarget.value = this.baseDoseValue.toFixed(1)
+    this.checkDoseUI()
+  }
+
+  checkDoseUI() {
+    const current = parseFloat(this.doseInputTarget.value)
+    const diff = isNaN(current) ? 0 : parseFloat((current - this.baseDoseValue).toFixed(2))
+    const isChanged = !isNaN(current) && Math.abs(current - this.baseDoseValue) >= 0.01
+
+    const isOutOfRange = isNaN(current) || current < 0 || current > 99.9
+
+    let matchedBtn = null
+    this.doseBtnTargets.forEach(btn => {
+      const btnAmount = parseFloat(btn.dataset.amount)
+      btn.disabled = isOutOfRange
+      if (isChanged && !isOutOfRange && Math.abs(diff - btnAmount) < 0.01) {
+        btn.classList.add("active")
+        matchedBtn = btn
+      } else {
+        btn.classList.remove("active")
+      }
+    })
+
+    const doseBox = this.doseInputTarget.closest(".dial-input-box")
+    if (isChanged && !matchedBtn) {
+      if (doseBox) doseBox.classList.add("custom-highlight")
+      this.doseInputTarget.classList.add("custom-highlight")
+    } else {
+      if (doseBox) doseBox.classList.remove("custom-highlight")
+      this.doseInputTarget.classList.remove("custom-highlight")
+    }
+
+    if (this.hasDoseResetBtnTarget) {
+      if (isChanged) {
+        this.doseResetBtnTarget.classList.remove("hidden")
+      } else {
+        this.doseResetBtnTarget.classList.add("hidden")
+      }
+    }
+  }
 
   // --- GRIND ACTIONS ---
   selectGrind(event) {
     event.preventDefault()
     const amount = parseFloat(event.currentTarget.dataset.amount)
-    this.grindInputTarget.value = (this.baseGrindValue + amount).toFixed(1)
     
-    this.updateGrindUI(amount)
-    this.grindInputTarget.style.backgroundColor = ""
-  }
-
-  manualGrind() {
+    // Toggle check: if already active, toggle off back to base
     const current = parseFloat(this.grindInputTarget.value)
-    const diff = current - this.baseGrindValue
-    let matched = false
-
-    this.grindBtnTargets.forEach(btn => {
-      const btnAmount = parseFloat(btn.dataset.amount)
-      if (Math.abs(diff - btnAmount) < 0.01) {
-        btn.style.backgroundColor = "#c9d6b2"
-        matched = true
-      } else {
-        btn.style.backgroundColor = ""
-      }
-    })
-
-    if (!matched && current !== this.baseGrindValue) {
-      this.grindInputTarget.style.backgroundColor = "#c9d6b2"
+    const targetVal = parseFloat((this.baseGrindValue + amount).toFixed(1))
+    
+    if (Math.abs(current - targetVal) < 0.01) {
+      this.resetGrind()
     } else {
-      this.grindInputTarget.style.backgroundColor = ""
+      this.grindInputTarget.value = targetVal.toFixed(1)
+      this.checkGrindUI()
     }
   }
 
-  updateGrindUI(selectedAmount) {
+  manualGrind() {
+    this.checkGrindUI()
+  }
+
+  resetGrind(event) {
+    if (event) event.preventDefault()
+    this.grindInputTarget.value = this.baseGrindValue.toFixed(1)
+    this.checkGrindUI()
+  }
+
+  checkGrindUI() {
+    const current = parseFloat(this.grindInputTarget.value)
+    const diff = isNaN(current) ? 0 : parseFloat((current - this.baseGrindValue).toFixed(2))
+    const isChanged = !isNaN(current) && Math.abs(current - this.baseGrindValue) >= 0.01
+
+    const isOutOfRange = isNaN(current) || current < 0 || current > 99.9
+
+    let matchedBtn = null
     this.grindBtnTargets.forEach(btn => {
       const btnAmount = parseFloat(btn.dataset.amount)
-      if (btnAmount === selectedAmount) {
-        btn.style.backgroundColor = "#c9d6b2"
+      btn.disabled = isOutOfRange
+      if (isChanged && !isOutOfRange && Math.abs(diff - btnAmount) < 0.01) {
+        btn.classList.add("active")
+        matchedBtn = btn
       } else {
-        btn.style.backgroundColor = ""
+        btn.classList.remove("active")
       }
     })
+
+    const grindBox = this.grindInputTarget.closest(".dial-input-box")
+    if (isChanged && !matchedBtn) {
+      if (grindBox) grindBox.classList.add("custom-highlight")
+      this.grindInputTarget.classList.add("custom-highlight")
+    } else {
+      if (grindBox) grindBox.classList.remove("custom-highlight")
+      this.grindInputTarget.classList.remove("custom-highlight")
+    }
+
+    if (this.hasGrindResetBtnTarget) {
+      if (isChanged) {
+        this.grindResetBtnTarget.classList.remove("hidden")
+      } else {
+        this.grindResetBtnTarget.classList.add("hidden")
+      }
+    }
   }
 }

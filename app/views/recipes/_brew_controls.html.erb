@@ -6,44 +6,80 @@
   <div data-controller="brew-adjust" 
        data-brew-adjust-base-dose-value="<%= base_dose %>" 
        data-brew-adjust-base-grind-value="<%= base_grind %>"
-       align="center">
+       class="recipe-dial-container">
        
     <%= form_with url: quick_log_recipe_path(recipe), method: :post, data: { turbo_frame: "_top", recipe_id: recipe.id, action: "submit->sandbox#quickLog" } do |f| %>
-      <div>
-        <p style="text-align: center;">
-          <%= f.number_field :dose, value: base_dose, step: 0.1, style: "width: auto; display: inline-block;", 
-                data: { brew_adjust_target: "doseInput", action: "input->brew-adjust#manualDose" } %>
-        </p>
-        <p style="display: flex; justify-content: center; gap: 6px; flex-wrap: nowrap;">
-          <button type="button" data-brew-adjust-target="doseBtn" data-action="brew-adjust#selectDose" data-amount="-1.0" style="flex-shrink: 1; padding: 8px 10px; font-size: 0.9rem;">-1.0g</button>
-          <button type="button" data-brew-adjust-target="doseBtn" data-action="brew-adjust#selectDose" data-amount="-0.5" style="flex-shrink: 1; padding: 8px 10px; font-size: 0.9rem;">-0.5g</button>
-          <button type="button" data-brew-adjust-target="doseBtn" data-action="brew-adjust#selectDose" data-amount="0" style="flex-shrink: 0; padding: 8px 12px; font-size: 0.9rem;">Keep</button>
-          <button type="button" data-brew-adjust-target="doseBtn" data-action="brew-adjust#selectDose" data-amount="0.5" style="flex-shrink: 1; padding: 8px 10px; font-size: 0.9rem;">+0.5g</button>
-          <button type="button" data-brew-adjust-target="doseBtn" data-action="brew-adjust#selectDose" data-amount="1.0" style="flex-shrink: 1; padding: 8px 10px; font-size: 0.9rem;">+1.0g</button>
-        </p>
+      
+      <div class="dial-layout">
+        
+        <!-- Left Buttons Column -->
+        <div class="dial-side-col dial-left-col">
+          <div class="dial-btn-row">
+            <button type="button" class="dial-step-btn" data-brew-adjust-target="doseBtn" data-action="brew-adjust#selectDose" data-amount="-1.0">-1.0g</button>
+            <button type="button" class="dial-step-btn" data-brew-adjust-target="doseBtn" data-action="brew-adjust#selectDose" data-amount="-0.5">-0.5g</button>
+          </div>
+          <div class="dial-btn-row">
+            <button type="button" class="dial-step-btn" data-brew-adjust-target="grindBtn" data-action="brew-adjust#selectGrind" data-amount="-0.2">-0.2</button>
+            <button type="button" class="dial-step-btn" data-brew-adjust-target="grindBtn" data-action="brew-adjust#selectGrind" data-amount="-0.1">-0.1</button>
+          </div>
+        </div>
+
+        <!-- Center Card -->
+        <div class="dial-card recipe-card">
+          <% if recipe.style.to_s.start_with?("Ristretto") %>
+            <div class="recipe-corner-badge">R</div>
+          <% elsif recipe.style.to_s.start_with?("Lungo") %>
+            <div class="recipe-corner-badge">L</div>
+          <% end %>
+
+          <div class="recipe-card-title dial-card-title">
+            <%= recipe.basket.name %>
+          </div>
+
+          <div class="recipe-card-stats dial-card-stats">
+            <!-- Dose Row -->
+            <div class="dial-stat-row">
+              <button type="button" class="dial-reset-btn hidden" data-brew-adjust-target="doseResetBtn" data-action="brew-adjust#resetDose" title="Reset dose">
+                <i class="fa-solid fa-rotate-left"></i>
+              </button>
+              <div class="dial-input-box">
+                <%= f.number_field :dose, value: base_dose, step: 0.1, min: 0, max: 99.9, class: "dial-number-input", 
+                      data: { brew_adjust_target: "doseInput", action: "input->brew-adjust#manualDose" } %>
+              </div>
+              <span class="dial-unit">g</span>
+            </div>
+
+            <!-- Grind Row -->
+            <div class="dial-stat-row">
+              <button type="button" class="dial-reset-btn hidden" data-brew-adjust-target="grindResetBtn" data-action="brew-adjust#resetGrind" title="Reset grind">
+                <i class="fa-solid fa-rotate-left"></i>
+              </button>
+              <div class="dial-input-box">
+                <%= f.number_field :grind, value: base_grind, step: 0.1, min: 0, max: 99.9, class: "dial-number-input", 
+                      data: { brew_adjust_target: "grindInput", action: "input->brew-adjust#manualGrind" } %>
+              </div>
+              <span class="dial-unit"><i class="fa-solid fa-gear"></i></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Buttons Column -->
+        <div class="dial-side-col dial-right-col">
+          <div class="dial-btn-row">
+            <button type="button" class="dial-step-btn" data-brew-adjust-target="doseBtn" data-action="brew-adjust#selectDose" data-amount="0.5">+0.5g</button>
+            <button type="button" class="dial-step-btn" data-brew-adjust-target="doseBtn" data-action="brew-adjust#selectDose" data-amount="1.0">+1.0g</button>
+          </div>
+          <div class="dial-btn-row">
+            <button type="button" class="dial-step-btn" data-brew-adjust-target="grindBtn" data-action="brew-adjust#selectGrind" data-amount="0.1">+0.1</button>
+            <button type="button" class="dial-step-btn" data-brew-adjust-target="grindBtn" data-action="brew-adjust#selectGrind" data-amount="0.2">+0.2</button>
+          </div>
+        </div>
+
       </div>
 
-      <br>
-
-      <div>
-        <p style="text-align: center;">
-          <%= f.number_field :grind, value: base_grind, step: 0.1, style: "width: auto; display: inline-block;", 
-                data: { brew_adjust_target: "grindInput", action: "input->brew-adjust#manualGrind" } %>
-        </p>
-        <p style="display: flex; justify-content: center; gap: 6px; flex-wrap: nowrap;">
-          <button type="button" data-brew-adjust-target="grindBtn" data-action="brew-adjust#selectGrind" data-amount="-0.2" style="flex-shrink: 1; padding: 8px 10px; font-size: 0.9rem;">-0.2</button>
-          <button type="button" data-brew-adjust-target="grindBtn" data-action="brew-adjust#selectGrind" data-amount="-0.1" style="flex-shrink: 1; padding: 8px 10px; font-size: 0.9rem;">-0.1</button>
-          <button type="button" data-brew-adjust-target="grindBtn" data-action="brew-adjust#selectGrind" data-amount="0" style="flex-shrink: 0; padding: 8px 12px; font-size: 0.9rem;">Keep</button>
-          <button type="button" data-brew-adjust-target="grindBtn" data-action="brew-adjust#selectGrind" data-amount="0.1" style="flex-shrink: 1; padding: 8px 10px; font-size: 0.9rem;">+0.1</button>
-          <button type="button" data-brew-adjust-target="grindBtn" data-action="brew-adjust#selectGrind" data-amount="0.2" style="flex-shrink: 1; padding: 8px 10px; font-size: 0.9rem;">+0.2</button>
-        </p>
+      <div class="dial-save-container">
+        <%= f.submit "SAVE", class: "btn-primary dial-save-btn" %>
       </div>
-
-      <br>
-
-      <p>
-        <%= f.submit "SAVE" %>
-      </p>
     <% end %>
   </div>
 <% end %>
