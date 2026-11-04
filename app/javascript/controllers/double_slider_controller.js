@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = [ "minSlider", "maxSlider", "minInput", "maxInput", "highlight", "trackWrap", "rangeBadge" ]
+  static targets = [ "minSlider", "maxSlider", "minInput", "maxInput", "highlight", "trackWrap", "rangeBadge", "submitBtn" ]
   static values = {
     minLimit: { type: Number, default: 5 },
     maxLimit: { type: Number, default: 25 },
@@ -10,6 +10,39 @@ export default class extends Controller {
 
   connect() {
     this.updateFromInputs()
+    this.updateSubmitState()
+  }
+
+  validateForm(event) {
+    if (this.isInvalid()) {
+      event.preventDefault()
+      event.stopImmediatePropagation()
+      return false
+    }
+  }
+
+  isInvalid() {
+    const minStr = this.minInputTarget?.value?.trim() || ""
+    const maxStr = this.maxInputTarget?.value?.trim() || ""
+
+    if (!minStr || !maxStr) return true
+
+    const minVal = parseFloat(minStr)
+    const maxVal = parseFloat(maxStr)
+
+    if (isNaN(minVal) || isNaN(maxVal)) return true
+    if (minVal <= 0 || maxVal <= 0) return true
+    if (minVal > maxVal) return true
+
+    return false
+  }
+
+  updateSubmitState() {
+    if (!this.hasSubmitBtnTarget) return
+    const invalid = this.isInvalid()
+    this.submitBtnTarget.disabled = invalid
+    this.submitBtnTarget.style.opacity = invalid ? "0.45" : "1"
+    this.submitBtnTarget.style.cursor = invalid ? "not-allowed" : "pointer"
   }
 
   // Called when min slider is dragged
@@ -27,6 +60,7 @@ export default class extends Controller {
     this.bringToFront({ target: this.minSliderTarget })
     this.updateHighlight()
     this.updateBadge()
+    this.updateSubmitState()
   }
 
   // Called when max slider is dragged
@@ -44,6 +78,7 @@ export default class extends Controller {
     this.bringToFront({ target: this.maxSliderTarget })
     this.updateHighlight()
     this.updateBadge()
+    this.updateSubmitState()
   }
 
   // Called when user types into min number input
@@ -120,6 +155,7 @@ export default class extends Controller {
 
     this.updateHighlight()
     this.updateBadge()
+    this.updateSubmitState()
   }
 
   bringToFront(event) {
@@ -177,6 +213,7 @@ export default class extends Controller {
 
     this.updateHighlight()
     this.updateBadge()
+    this.updateSubmitState()
 
     if (this.trackWrapTarget.setPointerCapture) {
       try {
@@ -230,6 +267,7 @@ export default class extends Controller {
 
     this.updateHighlight()
     this.updateBadge()
+    this.updateSubmitState()
   }
 
   onTrackPointerUp(event) {

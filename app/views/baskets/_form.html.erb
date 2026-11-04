@@ -1,27 +1,20 @@
-<%= form_with(model: basket) do |form| %>
-  <% if basket.errors.any? %>
-    <div style="background-color: #fde8e8; border: 1.5px solid #f8b4b4; border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; color: #9b1c1c;">
-      <h3 style="margin-top: 0; font-size: 1.1rem; color: #9b1c1c;"><%= pluralize(basket.errors.count, "error") %> prohibited this basket from being saved:</h3>
-      <ul style="margin-bottom: 0; padding-left: 20px;">
-        <% basket.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+<%= form_with(model: basket, html: { novalidate: true }, 
+      data: { 
+        controller: "double-slider", 
+        action: "submit->double-slider#validateForm", 
+        double_slider_min_limit_value: 5, 
+        double_slider_max_limit_value: 25, 
+        double_slider_step_value: 0.1 
+      }) do |form| %>
 
   <div>
     <p>
       <%= form.label :name, "Basket Name (e.g., Bottomless, Doublespout)", style: "display: block; font-weight: 700; margin-bottom: 6px;" %><br>
-      <%= form.text_field :name, placeholder: "e.g., VST 18g, IMS Baristapro", style: "width: 100%; box-sizing: border-box;" %>
+      <%= form.text_field :name, placeholder: Basket.next_default_name, style: "width: 100%; box-sizing: border-box;" %>
     </p>
 
     <!-- Dose Range Double Slider Card -->
-    <div class="dose-range-card" data-controller="double-slider"
-         data-double-slider-min-limit-value="5"
-         data-double-slider-max-limit-value="25"
-         data-double-slider-step-value="0.1">
-      
+    <div class="dose-range-card">
       <div class="dose-range-header">
         <span class="dose-range-title"><i class="fa-solid fa-scale-balanced" style="margin-right: 6px; color: var(--accent);"></i> Dose Capacity Range</span>
         <span class="dose-range-badge" data-double-slider-target="rangeBadge">
@@ -102,7 +95,7 @@
     <br>
     
     <p>
-      <%= form.submit "Save Basket" %>
+      <%= form.submit "Save Basket", data: { double_slider_target: "submitBtn" } %>
     </p>
   </div>
 <% end %>
