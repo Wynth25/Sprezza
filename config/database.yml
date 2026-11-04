@@ -26,17 +26,27 @@ test:
 
 production:
   primary:
+    <% if ENV["ADMIN_DATABASE_URL"].present? %>
     adapter: postgresql
     encoding: unicode
     url: <%= ENV["ADMIN_DATABASE_URL"] %>
-    pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
     connect_timeout: 15
+    <% else %>
+    <<: *default
+    database: <%= File.exist?(Rails.root.join("storage/production.sqlite3")) && !File.exist?(Rails.root.join("storage/production_admin.sqlite3")) ? "storage/production.sqlite3" : "storage/production_admin.sqlite3" %>
+    <% end %>
+    pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   sandbox:
+    <% if ENV["SANDBOX_DATABASE_URL"].present? %>
     adapter: postgresql
     encoding: unicode
     url: <%= ENV["SANDBOX_DATABASE_URL"] %>
-    pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
     connect_timeout: 15
+    <% else %>
+    <<: *default
+    database: storage/production_sandbox.sqlite3
+    <% end %>
+    pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   cache:
     <<: *default
     database: storage/production_cache.sqlite3
