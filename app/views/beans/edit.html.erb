@@ -4,8 +4,17 @@
 
 <%= render "form", bean: @bean %>
 
-<hr style="margin: 32px 0; border: none; height: 2px; background-color: var(--btn-bg);">
+<div data-controller="bean-delete">
+  <hr style="margin: 32px 0; border: none; height: 2px; background-color: var(--btn-bg);">
 
-<div style="text-align: center;">
-  <%= button_to "Delete Bean", bean_path(@bean), method: :delete, data: { turbo_confirm: "Are you sure you want to permanently delete this bean? All associated recipes will be lost." }, class: "btn-primary", style: "background-color: var(--danger-red); border-color: var(--danger-red);" %>
+  <div style="text-align: center;">
+    <button type="button" 
+            data-action="click->bean-delete#openModal" 
+            class="btn-primary" 
+            style="background-color: var(--danger-red); border-color: var(--danger-red); border-radius: 12px; padding: 10px 20px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
+      <i class="fa-solid fa-trash-can"></i> Delete Bean
+    </button>
+  </div>
+
+  <%= render "beans/delete_bean_modal", bean: @bean %>
 </div>

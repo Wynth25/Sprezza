@@ -74,10 +74,15 @@ class BeansController < ApplicationController
   end
 
   def destroy
+    if params[:confirmation].to_s.strip.downcase != "delete"
+      redirect_to edit_bean_path(@bean), alert: "Confirmation did not match. Deletion cancelled."
+      return
+    end
+
     @bean.destroy!
 
     respond_to do |format|
-      format.html { redirect_to beans_path, notice: "Bean was successfully destroyed.", status: :see_other }
+      format.html { redirect_to beans_path, notice: "Bean deleted", status: :see_other }
       format.json { head :no_content }
     end
   end
