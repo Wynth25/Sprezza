@@ -33,7 +33,7 @@ production:
     connect_timeout: 15
     <% else %>
     <<: *default
-    database: <%= File.exist?(Rails.root.join("storage/production.sqlite3")) && !File.exist?(Rails.root.join("storage/production_admin.sqlite3")) ? "storage/production.sqlite3" : "storage/production_admin.sqlite3" %>
+    database: <%= File.exist?(Rails.root.join("storage/production.sqlite3")) ? "storage/production.sqlite3" : "storage/production_admin.sqlite3" %>
     <% end %>
     pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   sandbox:
