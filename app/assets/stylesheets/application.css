@@ -1175,4 +1175,226 @@ input[type="date"] {
   }
 }
 
+/* ==========================================================================
+   Basket Dose Range Double Slider
+   ========================================================================== */
+.dose-range-card {
+  background-color: var(--card-cream);
+  border: 2px solid var(--btn-bg);
+  border-radius: 16px;
+  padding: 20px;
+  margin: 20px 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.dose-range-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.dose-range-title {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--header-brown);
+}
+
+.dose-range-badge {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--header-brown);
+  background: var(--btn-bg);
+  padding: 4px 10px;
+  border-radius: 8px;
+  letter-spacing: 0.3px;
+}
+
+.dose-range-inputs-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.dose-input-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dose-input-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #8c7b6d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dose-input-pill {
+  display: flex;
+  align-items: center;
+  background-color: var(--bg-beige);
+  border: 1.5px solid var(--btn-bg);
+  border-radius: 12px;
+  padding: 4px 12px;
+  transition: all 0.2s ease;
+}
+
+.dose-input-pill:focus-within {
+  border-color: var(--accent);
+  background-color: #ffffff;
+}
+
+.dose-range-num-input {
+  width: 100% !important;
+  border: none !important;
+  background: transparent !important;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--header-brown) !important;
+  text-align: center;
+  padding: 6px 0 !important;
+  margin: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+  font-family: inherit;
+  -moz-appearance: textfield;
+}
+
+.dose-range-num-input::-webkit-outer-spin-button,
+.dose-range-num-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.dose-range-unit {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-left: 2px;
+}
+
+.dose-range-separator {
+  color: #b0a294;
+  font-size: 1.1rem;
+  padding-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.double-slider-track-wrap {
+  position: relative;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  touch-action: none;
+  cursor: pointer;
+  margin: 0 4px;
+}
+
+.double-slider-rail {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background-color: var(--btn-bg);
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+.double-slider-highlight {
+  position: absolute;
+  height: 8px;
+  background-color: var(--header-brown);
+  border-radius: 999px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.double-slider-range {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
+  height: 24px;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  pointer-events: none;
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  border: none !important;
+  z-index: 2;
+}
+
+.double-slider-range::-webkit-slider-runnable-track {
+  background: transparent;
+  border: none;
+  height: 8px;
+}
+
+.double-slider-range::-moz-range-track {
+  background: transparent;
+  border: none;
+  height: 8px;
+}
+
+.double-slider-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  pointer-events: auto;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 3px solid var(--header-brown);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.18);
+  cursor: grab;
+  margin-top: -8px; /* (8px track - 24px thumb) / 2 */
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.double-slider-range::-moz-range-thumb {
+  pointer-events: auto;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 3px solid var(--header-brown);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.18);
+  cursor: grab;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.double-slider-range:active::-webkit-slider-thumb {
+  cursor: grabbing;
+  transform: scale(1.18);
+  border-color: var(--accent);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+}
+
+.double-slider-range:active::-moz-range-thumb {
+  cursor: grabbing;
+  transform: scale(1.18);
+  border-color: var(--accent);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+}
+
+.double-slider-scale {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  padding: 0 2px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #9e8e80;
+}
+
+
 

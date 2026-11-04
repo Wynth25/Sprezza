@@ -1,8 +1,8 @@
 <%= form_with(model: basket) do |form| %>
   <% if basket.errors.any? %>
-    <div>
-      <h2><%= pluralize(basket.errors.count, "error") %> prohibited this basket from being saved:</h2>
-      <ul>
+    <div style="background-color: #fde8e8; border: 1.5px solid #f8b4b4; border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; color: #9b1c1c;">
+      <h3 style="margin-top: 0; font-size: 1.1rem; color: #9b1c1c;"><%= pluralize(basket.errors.count, "error") %> prohibited this basket from being saved:</h3>
+      <ul style="margin-bottom: 0; padding-left: 20px;">
         <% basket.errors.each do |error| %>
           <li><%= error.full_message %></li>
         <% end %>
@@ -12,19 +12,92 @@
 
   <div>
     <p>
-      <%= form.label :name, "Basket Name (e.g., Bottomless, Doublespout)" %><br>
-      <%= form.text_field :name %>
+      <%= form.label :name, "Basket Name (e.g., Bottomless, Doublespout)", style: "display: block; font-weight: 700; margin-bottom: 6px;" %><br>
+      <%= form.text_field :name, placeholder: "e.g., VST 18g, IMS Baristapro", style: "width: 100%; box-sizing: border-box;" %>
     </p>
 
-    <p>
-      <%= form.label :min_dose, "Minimum Dose (g)" %><br>
-      <%= form.number_field :min_dose, step: 0.1 %>
-    </p>
+    <!-- Dose Range Double Slider Card -->
+    <div class="dose-range-card" data-controller="double-slider"
+         data-double-slider-min-limit-value="5"
+         data-double-slider-max-limit-value="25"
+         data-double-slider-step-value="0.1">
+      
+      <div class="dose-range-header">
+        <span class="dose-range-title"><i class="fa-solid fa-scale-balanced" style="margin-right: 6px; color: var(--accent);"></i> Dose Capacity Range</span>
+        <span class="dose-range-badge" data-double-slider-target="rangeBadge">
+          <%= basket.min_dose || 16.0 %>g – <%= basket.max_dose || 18.0 %>g
+        </span>
+      </div>
 
-    <p>
-      <%= form.label :max_dose, "Maximum Dose (g)" %><br>
-      <%= form.number_field :max_dose, step: 0.1 %>
-    </p>
+      <div class="dose-range-inputs-row">
+        <!-- Min Dose Input -->
+        <div class="dose-input-box">
+          <label class="dose-input-label">Min Dose</label>
+          <div class="dose-input-pill">
+            <%= form.number_field :min_dose, 
+                  value: basket.min_dose || 16.0,
+                  step: 0.1, 
+                  min: 0.1, 
+                  class: "dose-range-num-input", 
+                  data: { 
+                    double_slider_target: "minInput", 
+                    action: "input->double-slider#onInputChange" 
+                  } %>
+            <span class="dose-range-unit">g</span>
+          </div>
+        </div>
+
+        <div class="dose-range-separator">
+          <i class="fa-solid fa-arrow-right-long"></i>
+        </div>
+
+        <!-- Max Dose Input -->
+        <div class="dose-input-box">
+          <label class="dose-input-label">Max Dose</label>
+          <div class="dose-input-pill">
+            <%= form.number_field :max_dose, 
+                  value: basket.max_dose || 18.0,
+                  step: 0.1, 
+                  min: 0.1, 
+                  class: "dose-range-num-input", 
+                  data: { 
+                    double_slider_target: "maxInput", 
+                    action: "input->double-slider#onInputChange" 
+                  } %>
+            <span class="dose-range-unit">g</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slider Track -->
+      <div class="double-slider-track-wrap" 
+           data-double-slider-target="trackWrap" 
+           data-action="pointerdown->double-slider#onTrackPointerDown pointermove->double-slider#onTrackPointerMove pointerup->double-slider#onTrackPointerUp pointercancel->double-slider#onTrackPointerUp">
+        <div class="double-slider-rail"></div>
+        <div class="double-slider-highlight" data-double-slider-target="highlight"></div>
+        <input type="range" 
+               min="5" max="25" step="0.1" 
+               value="<%= [[5.0, (basket.min_dose || 16.0).to_f].max, 25.0].min %>"
+               class="double-slider-range" 
+               data-double-slider-target="minSlider" 
+               data-action="input->double-slider#onMinSliderChange pointerdown->double-slider#bringToFront">
+        <input type="range" 
+               min="5" max="25" step="0.1" 
+               value="<%= [[5.0, (basket.max_dose || 18.0).to_f].max, 25.0].min %>"
+               class="double-slider-range" 
+               data-double-slider-target="maxSlider" 
+               data-action="input->double-slider#onMaxSliderChange pointerdown->double-slider#bringToFront">
+      </div>
+
+      <!-- Scale ticks / labels -->
+      <div class="double-slider-scale">
+        <span>5g</span>
+        <span>10g</span>
+        <span>15g</span>
+        <span>20g</span>
+        <span>25g</span>
+      </div>
+    </div>
 
     <br>
     

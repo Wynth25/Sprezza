@@ -13,11 +13,13 @@ class BasketsController < ApplicationController
 
   # GET /baskets/new
   def new
-    @basket = Basket.new
+    @basket = Basket.new(min_dose: 16.0, max_dose: 18.0)
   end
 
   # GET /baskets/1/edit
   def edit
+    @basket.min_dose ||= 16.0
+    @basket.max_dose ||= 18.0
   end
 
   # POST /baskets or /baskets.json
