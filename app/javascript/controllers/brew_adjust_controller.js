@@ -31,12 +31,13 @@ export default class extends Controller {
     
     // Toggle check: if already active, toggle off back to base
     const current = parseFloat(this.doseInputTarget.value)
-    const targetVal = parseFloat((this.baseDoseValue + amount).toFixed(1))
+    const decimals = Math.max(1, (amount.toString().split(".")[1] || "").length)
+    const targetVal = parseFloat((this.baseDoseValue + amount).toFixed(decimals))
     
-    if (Math.abs(current - targetVal) < 0.01) {
+    if (Math.abs(current - targetVal) < 0.005) {
       this.resetDose()
     } else {
-      this.doseInputTarget.value = targetVal.toFixed(1)
+      this.doseInputTarget.value = targetVal.toFixed(decimals)
       this.doseInputTarget.dispatchEvent(new Event("input", { bubbles: true }))
       this.checkDoseUI()
     }
@@ -48,7 +49,8 @@ export default class extends Controller {
 
   resetDose(event) {
     if (event) event.preventDefault()
-    this.doseInputTarget.value = this.baseDoseValue.toFixed(1)
+    const decimals = Math.max(1, (this.baseDoseValue.toString().split(".")[1] || "").length)
+    this.doseInputTarget.value = this.baseDoseValue.toFixed(decimals)
     this.doseInputTarget.dispatchEvent(new Event("input", { bubbles: true }))
     this.checkDoseUI()
   }
@@ -56,14 +58,14 @@ export default class extends Controller {
   checkDoseUI() {
     const current = parseFloat(this.doseInputTarget.value)
     const diff = isNaN(current) ? 0 : parseFloat((current - this.baseDoseValue).toFixed(2))
-    const isChanged = !isNaN(current) && Math.abs(current - this.baseDoseValue) >= 0.01
+    const isChanged = !isNaN(current) && Math.abs(current - this.baseDoseValue) >= 0.005
 
     let matchedBtn = null
     this.doseBtnTargets.forEach(btn => {
       const btnAmount = parseFloat(btn.dataset.amount)
       btn.disabled = false
 
-      if (isChanged && Math.abs(diff - btnAmount) < 0.01) {
+      if (isChanged && Math.abs(diff - btnAmount) < 0.005) {
         btn.classList.add("active")
         matchedBtn = btn
       } else {
@@ -96,12 +98,13 @@ export default class extends Controller {
     
     // Toggle check: if already active, toggle off back to base
     const current = parseFloat(this.grindInputTarget.value)
-    const targetVal = parseFloat((this.baseGrindValue + amount).toFixed(1))
+    const decimals = Math.max(1, (amount.toString().split(".")[1] || "").length)
+    const targetVal = parseFloat((this.baseGrindValue + amount).toFixed(decimals))
     
-    if (Math.abs(current - targetVal) < 0.01) {
+    if (Math.abs(current - targetVal) < 0.005) {
       this.resetGrind()
     } else {
-      this.grindInputTarget.value = targetVal.toFixed(1)
+      this.grindInputTarget.value = targetVal.toFixed(decimals)
       this.grindInputTarget.dispatchEvent(new Event("input", { bubbles: true }))
       this.checkGrindUI()
     }
@@ -113,7 +116,8 @@ export default class extends Controller {
 
   resetGrind(event) {
     if (event) event.preventDefault()
-    this.grindInputTarget.value = this.baseGrindValue.toFixed(1)
+    const decimals = Math.max(1, (this.baseGrindValue.toString().split(".")[1] || "").length)
+    this.grindInputTarget.value = this.baseGrindValue.toFixed(decimals)
     this.grindInputTarget.dispatchEvent(new Event("input", { bubbles: true }))
     this.checkGrindUI()
   }
@@ -121,14 +125,14 @@ export default class extends Controller {
   checkGrindUI() {
     const current = parseFloat(this.grindInputTarget.value)
     const diff = isNaN(current) ? 0 : parseFloat((current - this.baseGrindValue).toFixed(2))
-    const isChanged = !isNaN(current) && Math.abs(current - this.baseGrindValue) >= 0.01
+    const isChanged = !isNaN(current) && Math.abs(current - this.baseGrindValue) >= 0.005
 
     let matchedBtn = null
     this.grindBtnTargets.forEach(btn => {
       const btnAmount = parseFloat(btn.dataset.amount)
       btn.disabled = false
 
-      if (isChanged && Math.abs(diff - btnAmount) < 0.01) {
+      if (isChanged && Math.abs(diff - btnAmount) < 0.005) {
         btn.classList.add("active")
         matchedBtn = btn
       } else {

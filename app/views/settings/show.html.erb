@@ -34,7 +34,77 @@
     </div>
   </div>
 
-  <!-- 2. DATABASE & ACCESS MODE -->
+  <!-- 2. DIAL STEP ADJUSTMENTS -->
+  <div class="settings-card">
+    <h3 style="margin-top: 0; display: flex; align-items: center; gap: 8px; font-size: 1.15rem;">
+      <i class="fa-solid fa-sliders"></i> Dial Step Adjustments
+    </h3>
+    <p style="color: var(--text-brown); opacity: 0.85; font-size: 0.9rem; margin-bottom: 16px;">
+      Customize the quick adjustment jump increments for the dial on recipe pages.
+    </p>
+
+    <%= form_with url: settings_path, method: :patch, style: "display: flex; flex-direction: column; gap: 16px;" do |f| %>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+        <!-- Grams / Dose Jump -->
+        <div style="background: var(--bg-beige, #f9f6f0); border: 1.5px solid var(--btn-bg, #eaddcf); border-radius: 14px; padding: 14px;">
+          <h4 style="margin: 0 0 10px 0; font-size: 0.95rem; display: flex; align-items: center; gap: 6px; color: var(--header-brown, #382e24);">
+            <i class="fa-solid fa-weight-scale"></i> Grams Jump (Dose)
+          </h4>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div>
+              <label for="dose_step_1" style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-brown, #5c4033); margin-bottom: 4px;">
+                Inner Step (Small Jump)
+              </label>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <%= f.number_field :dose_step_1, value: @dose_step_1, step: "0.05", min: "0.05", max: "10", id: "dose_step_1",
+                      style: "width: 100%; padding: 8px 12px; border-radius: 10px; border: 1.5px solid var(--btn-bg, #eaddcf); background: #ffffff; font-size: 0.95rem; font-weight: 600;" %>
+                <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-brown);">g</span>
+              </div>
+            </div>
+            <div>
+              <label for="dose_step_2" style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-brown, #5c4033); margin-bottom: 4px;">
+                Outer Step (Large Jump)
+              </label>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <%= f.number_field :dose_step_2, value: @dose_step_2, step: "0.05", min: "0.05", max: "10", id: "dose_step_2",
+                      style: "width: 100%; padding: 8px 12px; border-radius: 10px; border: 1.5px solid var(--btn-bg, #eaddcf); background: #ffffff; font-size: 0.95rem; font-weight: 600;" %>
+                <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-brown);">g</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Grind Size Jump -->
+        <div style="background: var(--bg-beige, #f9f6f0); border: 1.5px solid var(--btn-bg, #eaddcf); border-radius: 14px; padding: 14px;">
+          <h4 style="margin: 0 0 10px 0; font-size: 0.95rem; display: flex; align-items: center; gap: 6px; color: var(--header-brown, #382e24);">
+            <i class="fa-solid fa-gear"></i> Grind Size Jump
+          </h4>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div>
+              <label for="grind_step_1" style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-brown, #5c4033); margin-bottom: 4px;">
+                Inner Step (Small Jump)
+              </label>
+              <%= f.number_field :grind_step_1, value: @grind_step_1, step: "0.05", min: "0.01", max: "10", id: "grind_step_1",
+                    style: "width: 100%; padding: 8px 12px; border-radius: 10px; border: 1.5px solid var(--btn-bg, #eaddcf); background: #ffffff; font-size: 0.95rem; font-weight: 600;" %>
+            </div>
+            <div>
+              <label for="grind_step_2" style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-brown, #5c4033); margin-bottom: 4px;">
+                Outer Step (Large Jump)
+              </label>
+              <%= f.number_field :grind_step_2, value: @grind_step_2, step: "0.05", min: "0.01", max: "10", id: "grind_step_2",
+                    style: "width: 100%; padding: 8px 12px; border-radius: 10px; border: 1.5px solid var(--btn-bg, #eaddcf); background: #ffffff; font-size: 0.95rem; font-weight: 600;" %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <%= f.submit "Save Step Adjustments", class: "btn-primary", style: "border-radius: 12px; padding: 10px 18px; font-weight: 700; cursor: pointer; border: none;" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- 3. DATABASE & ACCESS MODE -->
   <div class="settings-card">
     <h3 style="margin-top: 0; display: flex; align-items: center; gap: 8px; font-size: 1.15rem;">
       <i class="fa-solid fa-database"></i> Database &amp; Access Mode
@@ -69,7 +139,7 @@
     <% end %>
   </div>
 
-  <!-- 3. DANGER ZONE / DATA DELETION -->
+  <!-- 4. DANGER ZONE / DATA DELETION -->
   <div class="settings-card" style="border: 2px solid rgba(233, 75, 89, 0.4); background: rgba(233, 75, 89, 0.04);">
     <h3 style="margin-top: 0; color: var(--danger-red); display: flex; align-items: center; gap: 8px; font-size: 1.15rem;">
       <i class="fa-solid fa-triangle-exclamation"></i> Danger Zone

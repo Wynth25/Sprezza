@@ -2,6 +2,19 @@
   <% latest = recipe.latest_brew %>
   <% base_dose = latest&.dose || 18.0 %>
   <% base_grind = latest&.grind || 4.0 %>
+  <% 
+    d_step_1 = Setting.get("dose_step_1", "0.5").to_f
+    d_step_2 = Setting.get("dose_step_2", "1.0").to_f
+    d_step_1 = 0.5 if d_step_1 <= 0
+    d_step_2 = 1.0 if d_step_2 <= 0
+
+    g_step_1 = Setting.get("grind_step_1", "0.1").to_f
+    g_step_2 = Setting.get("grind_step_2", "0.2").to_f
+    g_step_1 = 0.1 if g_step_1 <= 0
+    g_step_2 = 0.2 if g_step_2 <= 0
+
+    fmt_num = ->(v) { v == v.to_i ? v.to_i.to_s : v.to_s }
+  %>
   
   <div data-controller="brew-adjust" 
        data-brew-adjust-base-dose-value="<%= base_dose %>" 
@@ -15,12 +28,12 @@
         <!-- Left Buttons Column -->
         <div class="dial-side-col dial-left-col">
           <div class="dial-btn-row">
-            <button type="button" class="dial-step-btn" data-brew-adjust-target="doseBtn" data-action="brew-adjust#selectDose" data-amount="-1.0">-1.0g</button>
-            <button type="button" class="dial-step-btn" data-brew-adjust-target="doseBtn" data-action="brew-adjust#selectDose" data-amount="-0.5">-0.5g</button>
+            <button type="button" class="dial-step-btn" data-brew-adjust-target="doseBtn" data-action="brew-adjust#selectDose" data-amount="-<%= d_step_2 %>">-<%= fmt_num.call(d_step_2) %>g</button>
+            <button type="button" class="dial-step-btn" data-brew-adjust-target="doseBtn" data-action="brew-adjust#selectDose" data-amount="-<%= d_step_1 %>">-<%= fmt_num.call(d_step_1) %>g</button>
           </div>
           <div class="dial-btn-row">
-            <button type="button" class="dial-step-btn" data-brew-adjust-target="grindBtn" data-action="brew-adjust#selectGrind" data-amount="-0.2">-0.2</button>
-            <button type="button" class="dial-step-btn" data-brew-adjust-target="grindBtn" data-action="brew-adjust#selectGrind" data-amount="-0.1">-0.1</button>
+            <button type="button" class="dial-step-btn" data-brew-adjust-target="grindBtn" data-action="brew-adjust#selectGrind" data-amount="-<%= g_step_2 %>">-<%= fmt_num.call(g_step_2) %></button>
+            <button type="button" class="dial-step-btn" data-brew-adjust-target="grindBtn" data-action="brew-adjust#selectGrind" data-amount="-<%= g_step_1 %>">-<%= fmt_num.call(g_step_1) %></button>
           </div>
         </div>
 
@@ -66,12 +79,12 @@
         <!-- Right Buttons Column -->
         <div class="dial-side-col dial-right-col">
           <div class="dial-btn-row">
-            <button type="button" class="dial-step-btn" data-brew-adjust-target="doseBtn" data-action="brew-adjust#selectDose" data-amount="0.5">+0.5g</button>
-            <button type="button" class="dial-step-btn" data-brew-adjust-target="doseBtn" data-action="brew-adjust#selectDose" data-amount="1.0">+1.0g</button>
+            <button type="button" class="dial-step-btn" data-brew-adjust-target="doseBtn" data-action="brew-adjust#selectDose" data-amount="<%= d_step_1 %>">+<%= fmt_num.call(d_step_1) %>g</button>
+            <button type="button" class="dial-step-btn" data-brew-adjust-target="doseBtn" data-action="brew-adjust#selectDose" data-amount="<%= d_step_2 %>">+<%= fmt_num.call(d_step_2) %>g</button>
           </div>
           <div class="dial-btn-row">
-            <button type="button" class="dial-step-btn" data-brew-adjust-target="grindBtn" data-action="brew-adjust#selectGrind" data-amount="0.1">+0.1</button>
-            <button type="button" class="dial-step-btn" data-brew-adjust-target="grindBtn" data-action="brew-adjust#selectGrind" data-amount="0.2">+0.2</button>
+            <button type="button" class="dial-step-btn" data-brew-adjust-target="grindBtn" data-action="brew-adjust#selectGrind" data-amount="<%= g_step_1 %>">+<%= fmt_num.call(g_step_1) %></button>
+            <button type="button" class="dial-step-btn" data-brew-adjust-target="grindBtn" data-action="brew-adjust#selectGrind" data-amount="<%= g_step_2 %>">+<%= fmt_num.call(g_step_2) %></button>
           </div>
         </div>
 

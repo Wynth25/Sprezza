@@ -176,4 +176,65 @@ class SandboxActionsTest < ActionDispatch::IntegrationTest
     assert_equal 0, Recipe.count
     assert_equal 0, Brew.count
   end
+
+  test "jump settings can be configured and are reflected in recipe dial controls" do
+    # 1. Update jump settings via HTML form submit
+    patch settings_path, params: {
+      dose_step_1: "0.25",
+      dose_step_2: "0.75",
+      grind_step_1: "0.05",
+      grind_step_2: "0.15"
+    }
+    assert_redirected_to settings_path
+    follow_redirect!
+    assert_response :success
+    assert_select "input[name='dose_step_1'][value='0.25']"
+    assert_select "input[name='dose_step_2'][value='0.75']"
+    assert_select "input[name='grind_step_1'][value='0.05']"
+    assert_select "input[name='grind_step_2'][value='0.15']"
+
+    assert_equal "0.25", Setting.get("dose_step_1")
+    assert_equal "0.75", Setting.get("dose_step_2")
+    assert_equal "0.05", Setting.get("grind_step_1")
+    assert_equal "0.15", Setting.get("grind_step_2")
+
+    # 2. Recipe show page displays updated jump buttons
+    recipe = recipes(:one)
+    get recipe_path(recipe)
+    assert_response :success
+    assert_select "button[data-amount='-0.75']", text: "-0.75g"
+    assert_select "button[data-amount='-0.25']", text: "-0.25g"
+    assert_select "button[data-amount='0.25']", text: "+0.25g"
+    assert_select "button[data-amount='0.75']", text: "+0.75g"
+    assert_select "button[data-amount='-0.15']", text: "-0.15"
+    assert_select "button[data-amount='-0.05']", text: "-0.05"
+    assert_select "button[data-amount='0.05']", text: "+0.05"
+    assert_select "button[data-amount='0.15']", text: "+0.15"
+
+    # 3. Quick log handles 2-decimal dose and grind
+    assert_difference "Brew.count", 1 do
+      post quick_log_recipe_path(recipe), params: {
+        dose: 18.25,
+        grind: 4.05,
+        brew_notes: "Fine step test"
+      }
+    end
+    assert_redirected_to recipes_path
+    new_brew = recipe.brews.last
+    assert_equal 18.25, new_brew.dose
+    assert_equal 4.05, new_brew.grind
+
+    # 4. Fallback calculation if step 2 is omitted
+    patch settings_path, params: {
+      dose_step_1: "0.4",
+      dose_step_2: "",
+      grind_step_1: "0.2",
+      grind_step_2: ""
+    }
+    assert_redirected_to settings_path
+    assert_equal "0.4", Setting.get("dose_step_1")
+    assert_equal "0.8", Setting.get("dose_step_2")
+    assert_equal "0.2", Setting.get("grind_step_1")
+    assert_equal "0.4", Setting.get("grind_step_2")
+  end
 end

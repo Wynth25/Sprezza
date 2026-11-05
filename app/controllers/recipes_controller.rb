@@ -47,8 +47,8 @@ class RecipesController < ApplicationController
   end
 
   def quick_log
-    new_dose = params[:dose].to_f.round(1)
-    new_grind = params[:grind].to_f.round(1)
+    new_dose = params[:dose].to_f.round(2)
+    new_grind = params[:grind].to_f.round(2)
     brew_notes = params[:brew_notes].presence || params[:notes].presence
 
     brew_attrs = { dose: new_dose, grind: new_grind }
