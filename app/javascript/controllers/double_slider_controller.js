@@ -5,7 +5,7 @@ export default class extends Controller {
   static values = {
     minLimit: { type: Number, default: 5 },
     maxLimit: { type: Number, default: 25 },
-    step: { type: Number, default: 0.1 }
+    step: { type: Number, default: 0.5 }
   }
 
   connect() {
@@ -48,12 +48,11 @@ export default class extends Controller {
   // Called when min slider is dragged
   onMinSliderChange() {
     let minVal = parseFloat(this.minSliderTarget.value)
-    let maxVal = parseFloat(this.maxSliderTarget.value)
+    const maxVal = parseFloat(this.maxSliderTarget.value)
 
     if (minVal > maxVal) {
-      this.maxSliderTarget.value = minVal
-      this.maxInputTarget.value = minVal.toFixed(1)
-      maxVal = minVal
+      minVal = maxVal
+      this.minSliderTarget.value = minVal
     }
 
     this.minInputTarget.value = minVal.toFixed(1)
@@ -65,13 +64,12 @@ export default class extends Controller {
 
   // Called when max slider is dragged
   onMaxSliderChange() {
-    let minVal = parseFloat(this.minSliderTarget.value)
+    const minVal = parseFloat(this.minSliderTarget.value)
     let maxVal = parseFloat(this.maxSliderTarget.value)
 
     if (maxVal < minVal) {
-      this.minSliderTarget.value = maxVal
-      this.minInputTarget.value = maxVal.toFixed(1)
-      minVal = maxVal
+      maxVal = minVal
+      this.maxSliderTarget.value = maxVal
     }
 
     this.maxInputTarget.value = maxVal.toFixed(1)
@@ -229,40 +227,22 @@ export default class extends Controller {
     const moveX = event.clientX - rect.left
     const ratio = Math.max(0, Math.min(1, moveX / rect.width))
     const rawVal = this.minLimitValue + ratio * (this.maxLimitValue - this.minLimitValue)
-    const val = parseFloat(rawVal.toFixed(1))
+    const step = this.stepValue || 0.5
+    const steppedVal = Math.round(rawVal / step) * step
+    const val = parseFloat(steppedVal.toFixed(1))
 
     if (this.activeSlider === "min") {
       const maxVal = parseFloat(this.maxSliderTarget.value)
-      if (val > maxVal) {
-        // Dragged past max: smoothly switch active drag to max slider
-        this.minSliderTarget.value = maxVal
-        this.minInputTarget.value = maxVal.toFixed(1)
-        this.activeSlider = "max"
-        this.bringToFront({ target: this.maxSliderTarget })
-        const clamped = Math.min(this.maxLimitValue, val)
-        this.maxSliderTarget.value = clamped
-        this.maxInputTarget.value = clamped.toFixed(1)
-      } else {
-        const clamped = Math.max(this.minLimitValue, val)
-        this.minSliderTarget.value = clamped
-        this.minInputTarget.value = clamped.toFixed(1)
-      }
+      // Stop when hitting the max slider
+      const clamped = Math.max(this.minLimitValue, Math.min(maxVal, val))
+      this.minSliderTarget.value = clamped
+      this.minInputTarget.value = clamped.toFixed(1)
     } else if (this.activeSlider === "max") {
       const minVal = parseFloat(this.minSliderTarget.value)
-      if (val < minVal) {
-        // Dragged past min: smoothly switch active drag to min slider
-        this.maxSliderTarget.value = minVal
-        this.maxInputTarget.value = minVal.toFixed(1)
-        this.activeSlider = "min"
-        this.bringToFront({ target: this.minSliderTarget })
-        const clamped = Math.max(this.minLimitValue, val)
-        this.minSliderTarget.value = clamped
-        this.minInputTarget.value = clamped.toFixed(1)
-      } else {
-        const clamped = Math.min(this.maxLimitValue, val)
-        this.maxSliderTarget.value = clamped
-        this.maxInputTarget.value = clamped.toFixed(1)
-      }
+      // Stop when hitting the min slider
+      const clamped = Math.min(this.maxLimitValue, Math.max(minVal, val))
+      this.maxSliderTarget.value = clamped
+      this.maxInputTarget.value = clamped.toFixed(1)
     }
 
     this.updateHighlight()
