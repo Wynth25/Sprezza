@@ -24,7 +24,7 @@ export default class extends Controller {
           "Accept": "application/json",
           "X-CSRF-Token": csrfToken
         },
-        body: JSON.stringify({ star: this.starredValue })
+        body: JSON.stringify({ brew: { star: this.starredValue }, star: this.starredValue })
       }).catch(err => {
         console.warn("Could not save star to server:", err)
       })

@@ -65,7 +65,7 @@
                         class="action-icon-btn history-action-btn <%= 'starred' if is_starred %>" 
                         title="<%= is_starred ? 'Starred' : 'Star Brew' %>"
                         data-controller="brew-star"
-                        data-brew-star-url-value="<%= toggle_star_brew_path(brew) %>"
+                        data-brew-star-url-value="/recipes/<%= @recipe.id %>/brews/<%= brew.id %>"
                         data-brew-star-starred-value="<%= is_starred ? 'true' : 'false' %>"
                         data-brew-star-brew-id-value="<%= brew.id %>"
                         data-action="click->brew-star#toggle">

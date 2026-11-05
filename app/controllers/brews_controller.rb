@@ -37,10 +37,11 @@ class BrewsController < ApplicationController
 
   # PATCH/PUT /brews/1 or /brews/1.json
   def update
+    clean_params = brew_params.select { |k, _| @brew.has_attribute?(k) }
     respond_to do |format|
-      if @brew.update(brew_params)
-        format.html { redirect_to @brew, notice: "Brew was successfully updated.", status: :see_other }
-        format.json { render :show, status: :ok, location: @brew }
+      if @brew.update(clean_params)
+        format.html { redirect_back fallback_location: root_path, notice: "Brew was successfully updated." }
+        format.json { render json: { id: @brew.id, star: (@brew.has_attribute?(:star) ? @brew.star : true) }, status: :ok }
       else
         format.html { render :edit, status: :unprocessable_content }
         format.json { render json: @brew.errors, status: :unprocessable_content }
