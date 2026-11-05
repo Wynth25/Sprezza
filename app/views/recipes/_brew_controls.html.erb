@@ -43,7 +43,7 @@
                 <i class="fa-solid fa-rotate-left"></i>
               </button>
               <div class="dial-input-box">
-                <%= f.number_field :dose, value: base_dose, step: 0.1, min: 0, max: 99.9, class: "dial-number-input", 
+                <%= f.number_field :dose, value: base_dose, step: 0.1, class: "dial-number-input", 
                       data: { brew_adjust_target: "doseInput", action: "input->brew-adjust#manualDose" } %>
               </div>
               <span class="dial-unit">g</span>
@@ -55,7 +55,7 @@
                 <i class="fa-solid fa-rotate-left"></i>
               </button>
               <div class="dial-input-box">
-                <%= f.number_field :grind, value: base_grind, step: 0.1, min: 0, max: 99.9, class: "dial-number-input", 
+                <%= f.number_field :grind, value: base_grind, step: 0.1, class: "dial-number-input", 
                       data: { brew_adjust_target: "grindInput", action: "input->brew-adjust#manualGrind" } %>
               </div>
               <span class="dial-unit"><i class="fa-solid fa-gear"></i></span>

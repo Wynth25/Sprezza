@@ -127,18 +127,18 @@ class SandboxActionsTest < ActionDispatch::IntegrationTest
     recipe = Recipe.last
     assert_equal "Espresso", recipe.style
 
-    # 2. Quick Log Brew for Recipe
+    # 2. Quick Log Brew for Recipe (supports values exceeding 99.9)
     assert_difference "Brew.count", 1 do
       post quick_log_recipe_path(recipe), params: {
-        dose: 18.5,
-        grind: 4.0,
+        dose: 125.5,
+        grind: 105.0,
         brew_notes: "Sweet honey notes"
       }
     end
     assert_redirected_to recipes_path
     latest_brew = recipe.brews.last
-    assert_equal 18.5, latest_brew.dose
-    assert_equal 4.0, latest_brew.grind
+    assert_equal 125.5, latest_brew.dose
+    assert_equal 105.0, latest_brew.grind
     assert_equal "Sweet honey notes", latest_brew.notes
 
     # 3. Toggle Star on Brew

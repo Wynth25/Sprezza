@@ -61,13 +61,9 @@ export default class extends Controller {
     let matchedBtn = null
     this.doseBtnTargets.forEach(btn => {
       const btnAmount = parseFloat(btn.dataset.amount)
-      const targetVal = parseFloat((this.baseDoseValue + btnAmount).toFixed(1))
-      
-      // Only disable this specific button if clicking it would exceed 99.9 or drop below 0
-      const wouldBeOutOfRange = targetVal < 0 || targetVal > 99.9
-      btn.disabled = wouldBeOutOfRange
+      btn.disabled = false
 
-      if (isChanged && !wouldBeOutOfRange && Math.abs(diff - btnAmount) < 0.01) {
+      if (isChanged && Math.abs(diff - btnAmount) < 0.01) {
         btn.classList.add("active")
         matchedBtn = btn
       } else {
@@ -130,13 +126,9 @@ export default class extends Controller {
     let matchedBtn = null
     this.grindBtnTargets.forEach(btn => {
       const btnAmount = parseFloat(btn.dataset.amount)
-      const targetVal = parseFloat((this.baseGrindValue + btnAmount).toFixed(1))
-      
-      // Only disable this specific button if clicking it would exceed 99.9 or drop below 0
-      const wouldBeOutOfRange = targetVal < 0 || targetVal > 99.9
-      btn.disabled = wouldBeOutOfRange
+      btn.disabled = false
 
-      if (isChanged && !wouldBeOutOfRange && Math.abs(diff - btnAmount) < 0.01) {
+      if (isChanged && Math.abs(diff - btnAmount) < 0.01) {
         btn.classList.add("active")
         matchedBtn = btn
       } else {
