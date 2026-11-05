@@ -52,7 +52,10 @@ class RecipesController < ApplicationController
     new_grind = params[:grind].to_f.round(1)
     brew_notes = params[:brew_notes].presence || params[:notes].presence
 
-    @recipe.brews.create!(dose: new_dose, grind: new_grind, notes: brew_notes)
+    brew_attrs = { dose: new_dose, grind: new_grind }
+    brew_attrs[:notes] = brew_notes if brew_notes.present? && Brew.column_names.include?("notes")
+
+    @recipe.brews.create!(brew_attrs)
     redirect_back fallback_location: root_path, notice: "Brewed!"
   end
 
