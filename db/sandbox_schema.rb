@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_05_005000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_05_213500) do
   create_table "baskets", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "guest_token"
@@ -46,6 +46,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_05_005000) do
     t.text "notes"
     t.integer "recipe_id", null: false
     t.boolean "star", default: false
+    t.datetime "starred_at"
     t.datetime "updated_at", null: false
     t.index ["guest_token"], name: "index_brews_on_guest_token"
     t.index ["recipe_id"], name: "index_brews_on_recipe_id"

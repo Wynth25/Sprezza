@@ -68,6 +68,7 @@ export default class extends Controller {
       deletedRecipeIds: [],
       deletedBasketIds: [],
       recipeBrews: {},
+      brewStars: {},
       beanFreezeDates: {},
       beanOrder: [],
       basketOrder: [],
@@ -150,15 +151,49 @@ export default class extends Controller {
           showHeader.innerHTML = `<span class="stat-dose">${latest.dose}</span>g, <span class="stat-grind">${latest.grind}</span>`
           const historyList = document.getElementById("brew-history-list")
           if (historyList) {
-            historyList.querySelectorAll(".sandbox-brew").forEach(el => el.remove())
+            historyList.querySelectorAll(".sandbox-brew-card").forEach(el => el.remove())
             brews.forEach(b => {
-              const li = document.createElement("li")
-              li.className = "sandbox-brew"
-              li.innerHTML = `<strong>${b.date} (Sandbox)</strong><br>Dose: <span class="history-dose">${b.dose}</span>g | Grind: <span class="history-grind">${b.grind}</span>`
+              const cardEl = this.renderHistoryCard(b, recipeId)
               const empty = historyList.querySelector(".empty-history")
               if (empty) empty.remove()
-              historyList.prepend(li)
+              historyList.prepend(cardEl)
             })
+          }
+        }
+      })
+    }
+
+    // 3.1 Apply brew star states from sandbox
+    if (state.brewStars) {
+      Object.entries(state.brewStars).forEach(([brewId, starInfo]) => {
+        const starBtn = document.querySelector(`[data-brew-star-brew-id-value="${brewId}"]`)
+        if (starBtn) {
+          const isStarred = typeof starInfo === 'object' ? starInfo.star : Boolean(starInfo)
+          starBtn.dataset.brewStarStarredValue = isStarred ? "true" : "false"
+          starBtn.classList.toggle("starred", isStarred)
+          const icon = starBtn.querySelector("i")
+          if (icon) {
+            icon.className = isStarred ? "fa-solid fa-star" : "fa-regular fa-star"
+          }
+          const card = starBtn.closest(".history-card")
+          if (card) {
+            card.classList.toggle("starred", isStarred)
+            const ageEl = card.querySelector(".history-card-age")
+            if (ageEl) {
+              const beanAgeStr = ageEl.dataset.beanAge ? ` (${ageEl.dataset.beanAge}d bean)` : ""
+              if (isStarred) {
+                ageEl.textContent = `Starred today${beanAgeStr}`
+              } else {
+                const createdAtStr = ageEl.dataset.createdAt
+                if (createdAtStr) {
+                  const createdDate = new Date(createdAtStr)
+                  const now = new Date()
+                  const diffTime = Math.abs(now.setHours(0,0,0,0) - createdDate.setHours(0,0,0,0))
+                  const daysAgo = Math.floor(diffTime / (1000 * 60 * 60 * 24))
+                  ageEl.textContent = daysAgo <= 0 ? "Today" : (daysAgo === 1 ? "1 day since" : `${daysAgo} days since`)
+                }
+              }
+            }
           }
         }
       })
@@ -200,6 +235,61 @@ export default class extends Controller {
     }
   }
 
+  renderHistoryCard(brew, recipeId) {
+    const card = document.createElement("div")
+    const isStarred = Boolean(brew.star)
+    card.className = `history-card sandbox-brew-card ${isStarred ? 'starred' : ''}`
+    card.dataset.brewId = brew.id
+
+    const brewDate = brew.createdAt ? new Date(brew.createdAt) : new Date()
+    const now = new Date()
+    const isCurrentYear = brewDate.getFullYear() === now.getFullYear()
+    const day = brewDate.getDate()
+    const month = brewDate.getMonth() + 1
+    const hours = String(brewDate.getHours()).padStart(2, "0")
+    const minutes = String(brewDate.getMinutes()).padStart(2, "0")
+    const dateFormatted = isCurrentYear ? `${day}.${month} ${hours}:${minutes}` : `${day}.${month}.${brewDate.getFullYear()} ${hours}:${minutes}`
+
+    const ageFormatted = isStarred ? "Starred today" : "Today"
+
+    card.innerHTML = `
+      <div class="history-card-main">
+        <div class="history-card-stats">
+          <div class="recipe-stat recipe-stat-dose">${brew.dose}<small>g</small></div>
+          <div class="recipe-stat recipe-stat-grind">${brew.grind}<i class="fa-solid fa-gear"></i></div>
+        </div>
+
+        <div class="history-card-divider-v"></div>
+
+        <div class="history-card-info">
+          <div class="history-card-date">${dateFormatted}</div>
+          <div class="history-card-age" data-created-at="${brewDate.toISOString()}">${ageFormatted}</div>
+        </div>
+
+        <div class="history-card-actions">
+          <button type="button" class="action-icon-btn history-action-btn" title="Edit Brew">
+            <i class="fa-solid fa-pencil"></i>
+          </button>
+          <button type="button" 
+                  class="action-icon-btn history-action-btn ${isStarred ? 'starred' : ''}" 
+                  title="${isStarred ? 'Starred' : 'Star Brew'}"
+                  data-controller="brew-star"
+                  data-brew-star-url-value=""
+                  data-brew-star-starred-value="${isStarred ? 'true' : 'false'}"
+                  data-brew-star-brew-id-value="${brew.id}"
+                  data-action="click->brew-star#toggle">
+            <i class="${isStarred ? 'fa-solid fa-star' : 'fa-regular fa-star'}"></i>
+          </button>
+        </div>
+      </div>
+      ${brew.notes ? `
+        <div class="history-card-divider-h"></div>
+        <div class="history-card-notes">${brew.notes}</div>
+      ` : ''}
+    `
+    return card
+  }
+
   // --- Intercepted Actions in Sandbox Mode ---
 
   quickLog(event) {
@@ -210,14 +300,19 @@ export default class extends Controller {
     const recipeId = form.dataset.recipeId
     const doseInput = form.querySelector('[data-brew-adjust-target="doseInput"]') || form.querySelector('input[name="dose"]')
     const grindInput = form.querySelector('[data-brew-adjust-target="grindInput"]') || form.querySelector('input[name="grind"]')
+    const notesInput = form.querySelector('textarea[name="brew_notes"]') || form.querySelector('textarea[name="notes"]')
 
     const dose = parseFloat(doseInput.value).toFixed(1)
     const grind = parseFloat(grindInput.value).toFixed(1)
-    const dateStr = new Date().toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }) + " - " + new Date().toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })
+    const notes = notesInput ? notesInput.value.trim() : ""
+    const brewId = `sb_${Date.now()}`
+    const createdAt = new Date().toISOString()
+
+    const brewObj = { id: brewId, dose, grind, notes, star: false, createdAt }
 
     const state = this.getState()
     if (!state.recipeBrews[recipeId]) state.recipeBrews[recipeId] = []
-    state.recipeBrews[recipeId].push({ dose, grind, date: dateStr })
+    state.recipeBrews[recipeId].push(brewObj)
     this.saveState(state)
 
     const showHeader = document.getElementById("recipe-latest-stat")
@@ -229,16 +324,14 @@ export default class extends Controller {
     if (historyList) {
       const empty = historyList.querySelector(".empty-history")
       if (empty) empty.remove()
-      const li = document.createElement("li")
-      li.className = "sandbox-brew"
-      li.style.backgroundColor = "rgba(201, 214, 178, 0.25)"
-      li.style.padding = "6px 8px"
-      li.style.borderRadius = "8px"
-      li.innerHTML = `<strong>${dateStr} (Sandbox)</strong><br>Dose: ${dose}g | Grind: ${grind}`
-      historyList.prepend(li)
+      const cardEl = this.renderHistoryCard(brewObj, recipeId)
+      historyList.prepend(cardEl)
     }
 
     this.showToast("Brewed!")
+    setTimeout(() => {
+      window.location.href = "/"
+    }, 400)
   }
 
   deleteRecipe(event) {

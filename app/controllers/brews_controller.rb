@@ -38,10 +38,15 @@ class BrewsController < ApplicationController
   # PATCH/PUT /brews/1 or /brews/1.json
   def update
     clean_params = brew_params.select { |k, _| @brew.has_attribute?(k) }
+    if clean_params.key?(:star) && @brew.has_attribute?(:starred_at)
+      is_star = ActiveModel::Type::Boolean.new.cast(clean_params[:star])
+      clean_params[:starred_at] = is_star ? Time.current : nil
+    end
+
     respond_to do |format|
       if @brew.update(clean_params)
         format.html { redirect_back fallback_location: root_path, notice: "Brew was successfully updated." }
-        format.json { render json: { id: @brew.id, star: (@brew.has_attribute?(:star) ? @brew.star : true) }, status: :ok }
+        format.json { render json: { id: @brew.id, star: (@brew.has_attribute?(:star) ? @brew.star : true), starred_at: (@brew.respond_to?(:starred_at) ? @brew.starred_at : nil) }, status: :ok }
       else
         format.html { render :edit, status: :unprocessable_content }
         format.json { render json: @brew.errors, status: :unprocessable_content }
@@ -63,12 +68,14 @@ class BrewsController < ApplicationController
   def toggle_star
     new_star = params.key?(:star) ? ActiveModel::Type::Boolean.new.cast(params[:star]) : !@brew.star
 
-    if @brew.has_attribute?(:star)
-      @brew.update(star: new_star)
-    end
+    attrs = {}
+    attrs[:star] = new_star if @brew.has_attribute?(:star)
+    attrs[:starred_at] = (new_star ? Time.current : nil) if @brew.has_attribute?(:starred_at)
+
+    @brew.update(attrs) if attrs.any?
 
     respond_to do |format|
-      format.json { render json: { id: @brew.id, star: (@brew.has_attribute?(:star) ? @brew.star : new_star) } }
+      format.json { render json: { id: @brew.id, star: (@brew.has_attribute?(:star) ? @brew.star : new_star), starred_at: (@brew.respond_to?(:starred_at) ? @brew.starred_at : nil) } }
       format.html { redirect_back fallback_location: root_path }
     end
   end
@@ -80,6 +87,6 @@ class BrewsController < ApplicationController
   end
 
   def brew_params
-    params.require(:brew).permit(:recipe_id, :dose, :grind, :star, :notes)
+    params.require(:brew).permit(:recipe_id, :dose, :grind, :star, :starred_at, :notes)
   end
 end

@@ -56,7 +56,7 @@ class RecipesController < ApplicationController
     brew_attrs[:notes] = brew_notes if brew_notes.present? && Brew.column_names.include?("notes")
 
     @recipe.brews.create!(brew_attrs)
-    redirect_back fallback_location: root_path, notice: "Brewed!"
+    redirect_to recipes_path, notice: "Brewed!"
   end
 
   def sort

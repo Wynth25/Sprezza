@@ -15,14 +15,11 @@ class Bean < ApplicationRecord
     frozen_on || freeze_date
   end
 
-  def effective_age_in_days
+  def effective_age_in_days(as_of: Date.current)
     return 0 unless roast_date
     
-    if effective_frozen_date.present?
-      (effective_frozen_date - roast_date).to_i
-    else
-      (Date.current - roast_date).to_i
-    end
+    end_date = effective_frozen_date.present? ? [effective_frozen_date, as_of].min : as_of
+    (end_date - roast_date).to_i
   end
 
   private

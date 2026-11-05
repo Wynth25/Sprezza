@@ -1667,6 +1667,14 @@ input[type="date"] {
   color: var(--header-brown);
 }
 
+.history-action-btn.confirm-unstar {
+  background-color: var(--danger-red) !important;
+}
+
+.history-action-btn.confirm-unstar i {
+  color: #ffffff !important;
+}
+
 .history-card-divider-h {
   height: 1.5px;
   background-color: var(--btn-bg);

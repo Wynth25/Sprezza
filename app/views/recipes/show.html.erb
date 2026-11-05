@@ -33,15 +33,33 @@
             is_current_year = brew.created_at.year == Time.current.year
             date_formatted = is_current_year ? brew.created_at.strftime("%-d.%-m %H:%M") : brew.created_at.strftime("%-d.%-m.%Y %H:%M")
             days_ago = (Date.current - brew.created_at.to_date).to_i
-            age_formatted = if days_ago <= 0
-              "Today"
-            elsif days_ago == 1
-              "1 day since"
-            else
-              "#{days_ago} days since"
-            end
             is_starred = brew.respond_to?(:star) && brew.star?
             brew_notes = brew.respond_to?(:notes) ? brew.notes.presence : nil
+            starred_date = (brew.respond_to?(:starred_at) && brew.starred_at.present?) ? brew.starred_at.to_date : brew.updated_at&.to_date
+            
+            bean_age_at_star = if is_starred && @recipe.bean&.roast_date.present?
+              @recipe.bean.effective_age_in_days(as_of: (starred_date || brew.created_at.to_date))
+            end
+
+            age_formatted = if is_starred
+              star_days = (Date.current - (starred_date || brew.created_at.to_date)).to_i
+              label = if star_days <= 0
+                "Starred today"
+              elsif star_days == 1
+                "Starred 1 day ago"
+              else
+                "Starred #{star_days} days ago"
+              end
+              bean_age_at_star ? "#{label} (#{bean_age_at_star}d bean)" : label
+            else
+              if days_ago <= 0
+                "Today"
+              elsif days_ago == 1
+                "1 day since"
+              else
+                "#{days_ago} days since"
+              end
+            end
           %>
           <div class="history-card <%= 'starred' if is_starred %>" data-brew-id="<%= brew.id %>">
             <div class="history-card-main">
@@ -54,7 +72,7 @@
 
               <div class="history-card-info">
                 <div class="history-card-date"><%= date_formatted %></div>
-                <div class="history-card-age"><%= age_formatted %></div>
+                <div class="history-card-age" data-created-at="<%= brew.created_at.iso8601 %>" data-bean-age="<%= @recipe.bean&.effective_age_in_days %>"><%= age_formatted %></div>
               </div>
 
               <div class="history-card-actions">
