@@ -4,6 +4,9 @@ class SettingsController < ApplicationController
     @dose_step_2 = Setting.get("dose_step_2", "1.0")
     @grind_step_1 = Setting.get("grind_step_1", "0.1")
     @grind_step_2 = Setting.get("grind_step_2", "0.2")
+
+    @grinder_min = Setting.get("grinder_min", "1.0")
+    @grinder_max = Setting.get("grinder_max", "10.0")
   end
 
   def update
@@ -17,6 +20,29 @@ class SettingsController < ApplicationController
       else
         return render json: { error: "Invalid setting" }, status: :unprocessable_entity
       end
+    end
+
+    # Handle grinder range
+    if params[:grinder_min].present? || params[:grinder_max].present?
+      g_min = params[:grinder_min].to_f.round(1) if params[:grinder_min].present?
+      g_max = params[:grinder_max].to_f.round(1) if params[:grinder_max].present?
+
+      if g_min && g_max && g_min >= g_max
+        respond_to do |format|
+          format.html { redirect_to settings_path, alert: "Minimum grinder setting must be less than maximum." }
+          format.json { render json: { error: "Minimum must be less than maximum" }, status: :unprocessable_entity }
+        end
+        return
+      end
+
+      Setting.set("grinder_min", g_min.to_s) if g_min && g_min > 0
+      Setting.set("grinder_max", g_max.to_s) if g_max && g_max > 0
+
+      respond_to do |format|
+        format.html { redirect_to settings_path, notice: "Grinder range saved." }
+        format.json { render json: { status: "ok", grinder_min: Setting.get("grinder_min"), grinder_max: Setting.get("grinder_max") } }
+      end
+      return
     end
 
     # Handle dose & grind jumps

@@ -236,5 +236,19 @@ class SandboxActionsTest < ActionDispatch::IntegrationTest
     assert_equal "0.8", Setting.get("dose_step_2")
     assert_equal "0.2", Setting.get("grind_step_1")
     assert_equal "0.4", Setting.get("grind_step_2")
+
+    # 5. Grinder range setting configuration and reflection in new recipe slider
+    patch settings_path, params: {
+      grinder_min: "2.0",
+      grinder_max: "8.5"
+    }
+    assert_redirected_to settings_path
+    assert_equal "2.0", Setting.get("grinder_min")
+    assert_equal "8.5", Setting.get("grinder_max")
+
+    get new_recipe_path
+    assert_response :success
+    assert_select "input#initial_grind_slider[min='2.0'][max='8.5'][value='5.3']"
+    assert_select "input#initial_grind_number[min='2.0'][max='8.5'][value='5.3']"
   end
 end

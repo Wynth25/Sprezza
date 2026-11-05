@@ -52,15 +52,22 @@
     </div>
 
     <!-- GRIND SLIDER -->
+    <%
+      grinder_min = Setting.get("grinder_min", "1.0").to_f
+      grinder_max = Setting.get("grinder_max", "10.0").to_f
+      grinder_min = 1.0 if grinder_min <= 0
+      grinder_max = 10.0 if grinder_max <= grinder_min
+      initial_default = ((grinder_min + grinder_max) / 2.0).round(1)
+    %>
     <div style="margin-bottom: 40px;">
       <label style="display: block; font-weight: bold; margin-bottom: 10px;">Initial Grind Setting</label>
       <div style="display: flex; gap: 15px; align-items: center;">
-        <%= range_field_tag :initial_grind, 4.5, min: 3.0, max: 6.0, step: 0.1, 
+        <%= range_field_tag :initial_grind, initial_default, min: grinder_min, max: grinder_max, step: 0.1, 
               id: "initial_grind_slider",
               oninput: "document.getElementById('initial_grind_number').value = this.value",
               style: "flex-grow: 1; max-width: 200px;" %>
         
-        <%= number_field_tag :initial_grind, 4.5, step: 0.1, 
+        <%= number_field_tag :initial_grind, initial_default, min: grinder_min, max: grinder_max, step: 0.1, 
               id: "initial_grind_number",
               oninput: "document.getElementById('initial_grind_slider').value = this.value",
               style: "width: 70px; padding: 5px; text-align: center;" %>
