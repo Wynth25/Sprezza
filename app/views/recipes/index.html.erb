@@ -88,7 +88,7 @@
                   </div>
 
                   <!-- Delete Overlay Form (Delete mode) -->
-                  <%= button_to recipe_path(recipe), method: :delete, form_class: "delete-overlay-form", data: { turbo_confirm: "Delete #{recipe.basket.name} recipe for #{bean.name}?", action: "click->sandbox#deleteRecipe" }, class: "recipe-delete-overlay" do %>
+                  <%= button_to recipe_path(recipe), method: :delete, form_class: "delete-overlay-form", data: { turbo_confirm: "Delete #{recipe.basket.name} recipe for #{bean.name}?" }, class: "recipe-delete-overlay" do %>
                     <i class="fa-solid fa-trash-can"></i>
                   <% end %>
                   

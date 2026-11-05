@@ -17,14 +17,17 @@ export default class extends Controller {
     const max = selectedOption.dataset.max
 
     if (min && max) {
+      const minNum = parseFloat(min)
+      const maxNum = parseFloat(max)
+      const center = parseFloat(((minNum + maxNum) / 2).toFixed(1))
+
       // Update the physical limits of the slider
       this.doseSliderTarget.min = min
       this.doseSliderTarget.max = max
       
-      // PRESERVE THE VALUE: 
-      // Force the slider to try and match whatever is currently in the text box,
-      // rather than overriding the text box to the middle of the new range.
-      this.doseSliderTarget.value = this.doseNumberTarget.value
+      // Default to center of basket range
+      this.doseSliderTarget.value = center
+      this.doseNumberTarget.value = center
       
       // Unlock the inputs
       this.doseSliderTarget.disabled = false

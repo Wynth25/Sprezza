@@ -1,6 +1,5 @@
 class BrewsController < ApplicationController
   before_action :set_brew, only: %i[ show edit update destroy toggle_star ]
-  before_action :require_admin!, only: %i[ create update destroy toggle_star ]
 
   # GET /brews or /brews.json
   def index
@@ -11,9 +10,10 @@ class BrewsController < ApplicationController
   def show
   end
 
-  # GET /brews/new
+  # GET /recipes/:recipe_id/brews/new
   def new
-    @brew = Brew.new
+    @recipe = Recipe.find_by(id: params[:recipe_id])
+    @brew = @recipe ? @recipe.brews.build : Brew.new
   end
 
   # GET /brews/1/edit
@@ -26,7 +26,7 @@ class BrewsController < ApplicationController
 
     respond_to do |format|
       if @brew.save
-        format.html { redirect_to @brew, notice: "Brew was successfully created." }
+        format.html { redirect_to recipe_url(@brew.recipe), notice: "Brew was successfully created." }
         format.json { render :show, status: :created, location: @brew }
       else
         format.html { render :new, status: :unprocessable_content }
@@ -59,7 +59,7 @@ class BrewsController < ApplicationController
     @brew.destroy!
 
     respond_to do |format|
-      format.html { redirect_to brews_path, notice: "Brew was successfully destroyed.", status: :see_other }
+      format.html { redirect_to (@brew.recipe ? recipe_url(@brew.recipe) : root_path), notice: "Brew was successfully destroyed.", status: :see_other }
       format.json { head :no_content }
     end
   end

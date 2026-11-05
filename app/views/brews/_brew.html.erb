@@ -15,8 +15,8 @@
   </div>
 
   <div>
-    <strong>Rating:</strong>
-    <%= brew.rating %>
+    <strong>Star:</strong>
+    <%= brew.respond_to?(:star) ? brew.star : false %>
   </div>
 
 </div>

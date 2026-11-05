@@ -1,6 +1,5 @@
 class BeansController < ApplicationController
   before_action :set_bean, only: %i[ show edit update destroy ]
-  before_action :require_admin!, only: %i[ create update destroy archive update_freeze sort ]
 
   # GET /beans or /beans.json
   def index
@@ -39,11 +38,18 @@ class BeansController < ApplicationController
   end
 
   def update
+    attrs = bean_params.dup
+    if attrs.key?(:frozen_on)
+      attrs[:freeze_date] = attrs[:frozen_on]
+    elsif attrs.key?(:freeze_date)
+      attrs[:frozen_on] = attrs[:freeze_date]
+    end
+
     respond_to do |format|
-      if @bean.update(bean_params)
-        notice_message = if bean_params.key?(:frozen_on) || bean_params.key?(:freeze_date)
+      if @bean.update(attrs)
+        notice_message = if attrs.key?(:frozen_on) || attrs.key?(:freeze_date)
                            "Date saved"
-                         elsif bean_params.key?(:archived)
+                         elsif attrs.key?(:archived)
                            @bean.archived ? "Bean archived" : "Bean restored"
                          else
                            "Bean saved"

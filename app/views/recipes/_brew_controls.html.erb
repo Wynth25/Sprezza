@@ -8,7 +8,7 @@
        data-brew-adjust-base-grind-value="<%= base_grind %>"
        class="recipe-dial-container">
        
-    <%= form_with url: quick_log_recipe_path(recipe), method: :post, data: { turbo_frame: "_top", recipe_id: recipe.id, action: "submit->sandbox#quickLog" } do |f| %>
+    <%= form_with url: quick_log_recipe_path(recipe), method: :post, data: { turbo_frame: "_top", recipe_id: recipe.id } do |f| %>
       
       <div class="dial-layout">
         
@@ -98,6 +98,7 @@
                     class="btn-return-subtle dial-action-icon-btn dial-return-btn" 
                     data-controller="return-discard"
                     data-return-discard-return-url-value="<%= recipes_path %>"
+                    data-return-discard-preserve-content-value="true"
                     data-action="click->return-discard#handleClick"
                     title="Return">
               <i class="fa-solid fa-arrow-left"></i>

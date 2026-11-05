@@ -1,6 +1,5 @@
 class BasketsController < ApplicationController
   before_action :set_basket, only: %i[ show edit update destroy ]
-  before_action :require_admin!, only: %i[ create update destroy sort ]
 
   # GET /baskets or /baskets.json
   def index

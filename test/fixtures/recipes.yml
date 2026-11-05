@@ -3,11 +3,9 @@
 one:
   bean: one
   basket: one
-  style: MyString
-  target_ratio: MyString
+  style: Espresso
 
 two:
   bean: two
   basket: two
-  style: MyString
-  target_ratio: MyString
+  style: Espresso

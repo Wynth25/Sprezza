@@ -20,7 +20,7 @@ class BeansControllerTest < ActionDispatch::IntegrationTest
       post beans_url, params: { bean: { description: @bean.description, frozen_on: @bean.frozen_on, name: @bean.name, notes: @bean.notes, roast_date: @bean.roast_date, roastery: @bean.roastery } }
     end
 
-    assert_redirected_to bean_url(Bean.last)
+    assert_redirected_to beans_url
   end
 
   test "should show bean" do
@@ -35,12 +35,12 @@ class BeansControllerTest < ActionDispatch::IntegrationTest
 
   test "should update bean" do
     patch bean_url(@bean), params: { bean: { description: @bean.description, frozen_on: @bean.frozen_on, name: @bean.name, notes: @bean.notes, roast_date: @bean.roast_date, roastery: @bean.roastery } }
-    assert_redirected_to bean_url(@bean)
+    assert_redirected_to beans_url
   end
 
   test "should destroy bean" do
     assert_difference("Bean.count", -1) do
-      delete bean_url(@bean)
+      delete bean_url(@bean), params: { confirmation: "delete" }
     end
 
     assert_redirected_to beans_url

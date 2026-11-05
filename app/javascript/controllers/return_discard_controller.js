@@ -2,7 +2,8 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static values = {
-    returnUrl: String
+    returnUrl: String,
+    preserveContent: { type: Boolean, default: false }
   }
 
   connect() {
@@ -101,13 +102,17 @@ export default class extends Controller {
 
   setReturnState() {
     this.pressCount = 0
-    this.element.innerHTML = this.originalHtml
+    if (!this.preserveContentValue) {
+      this.element.innerHTML = this.originalHtml
+    }
     this.element.classList.remove("btn-discard-active")
     this.element.classList.add("btn-return-subtle")
   }
 
   setDiscardState() {
-    this.element.textContent = "Discard"
+    if (!this.preserveContentValue) {
+      this.element.textContent = "Discard"
+    }
     this.element.classList.remove("btn-return-subtle")
     this.element.classList.add("btn-discard-active")
   }

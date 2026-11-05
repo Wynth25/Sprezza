@@ -76,24 +76,6 @@ export default class extends Controller {
       event.preventDefault()
       return
     }
-
-    // In Sandbox mode (non-admin), execute client-side wipe
-    if (!this.adminValue) {
-      event.preventDefault()
-      const sandbox = this.application.getControllerForElementAndIdentifier(document.body, "sandbox")
-      if (sandbox) {
-        const state = sandbox.getState()
-        state.clearedAll = true
-        state.recipeBrews = {}
-        state.deletedRecipeIds = []
-        state.beanFreezeDates = {}
-        state.beanOrder = []
-        sandbox.saveState(state)
-        sandbox.applyOverrides()
-        sandbox.showToast("All sandbox data deleted.")
-      }
-      this.closeModal()
-    }
-    // If adminValue is true, form submits naturally to DELETE /purge_data
+    // Form submits naturally to DELETE /purge_data (purges connected DB)
   }
 }

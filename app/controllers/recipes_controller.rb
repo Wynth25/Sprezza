@@ -1,6 +1,5 @@
 class RecipesController < ApplicationController
   before_action :set_recipe, only: %i[ show edit update destroy quick_log ]
-  before_action :require_admin!, only: %i[ create update destroy quick_log sort ]
 
   def index
     @beans = Bean.includes(recipes: [:basket, :brews])

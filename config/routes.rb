@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   get 'settings', to: 'settings#show'
   patch 'settings', to: 'settings#update'
   delete 'purge_data', to: 'data#purge'
+  post 'reset_sandbox', to: 'data#reset_sandbox'
 
   resources :beans do
     collection do
@@ -37,6 +38,7 @@ Rails.application.routes.draw do
     resources :brews
   end
 
+  resources :brews
   patch "brews/:id/toggle_star", to: "brews#toggle_star", as: :toggle_star_brew
   
   root "recipes#index"

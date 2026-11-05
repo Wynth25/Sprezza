@@ -144,15 +144,6 @@ export default class extends Controller {
     const beanIds = Array.from(this.beanListTarget.children).map(el => el.dataset.id).filter(Boolean)
     if (beanIds.length === 0) return
 
-    const sandbox = this.application.getControllerForElementAndIdentifier(document.body, "sandbox")
-    if (sandbox && !sandbox.adminValue) {
-      const state = sandbox.getState()
-      state.beanOrder = beanIds
-      sandbox.saveState(state)
-      sandbox.showToast("Bean order saved (Sandbox)!")
-      return
-    }
-
     fetch("/beans/sort", {
       method: "PATCH",
       headers: {
@@ -168,15 +159,6 @@ export default class extends Controller {
     const basketIds = Array.from(this.basketListTarget.children).map(el => el.dataset.id).filter(Boolean)
     if (basketIds.length === 0) return
 
-    const sandbox = this.application.getControllerForElementAndIdentifier(document.body, "sandbox")
-    if (sandbox && !sandbox.adminValue) {
-      const state = sandbox.getState()
-      state.basketOrder = basketIds
-      sandbox.saveState(state)
-      sandbox.showToast("Basket order saved (Sandbox)!")
-      return
-    }
-
     fetch("/baskets/sort", {
       method: "PATCH",
       headers: {
@@ -188,22 +170,6 @@ export default class extends Controller {
   }
 
   saveRecipeSort() {
-    const sandbox = this.application.getControllerForElementAndIdentifier(document.body, "sandbox")
-    if (sandbox && !sandbox.adminValue) {
-      const state = sandbox.getState()
-      if (!state.recipeOrders) state.recipeOrders = {}
-      this.recipeGridTargets.forEach(grid => {
-        const beanId = grid.dataset.beanId
-        const recipeIds = Array.from(grid.children).map(el => el.dataset.id).filter(Boolean)
-        if (beanId && recipeIds.length > 0) {
-          state.recipeOrders[beanId] = recipeIds
-        }
-      })
-      sandbox.saveState(state)
-      sandbox.showToast("Recipe order saved (Sandbox)!")
-      return
-    }
-
     this.recipeGridTargets.forEach(grid => {
       const recipeIds = Array.from(grid.children).map(el => el.dataset.id).filter(Boolean)
       if (recipeIds.length === 0) return
@@ -279,25 +245,6 @@ export default class extends Controller {
         event.preventDefault()
         input.value = originalDate || ""
         return
-      }
-    }
-
-    const sandbox = this.application.getControllerForElementAndIdentifier(document.body, "sandbox")
-    if (sandbox && !sandbox.adminValue) {
-      event.preventDefault()
-      const beanCard = form.closest(".bean-card")
-      const beanId = beanCard?.dataset.id
-      if (beanId) {
-        const state = sandbox.getState()
-        state.beanFreezeDates[beanId] = newDate
-        sandbox.saveState(state)
-
-        form.dataset.frozen = (newDate !== "").toString()
-        form.dataset.original = newDate
-        const menu = form.closest(".freeze-menu")
-        if (menu) menu.classList.add("hidden")
-        if (this.hasBackdropTarget) this.backdropTarget.classList.add("hidden")
-        sandbox.showToast("Date saved")
       }
     }
   }

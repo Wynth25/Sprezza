@@ -21,8 +21,12 @@ development:
     database: storage/development_cable.sqlite3
 
 test:
-  <<: *default
-  database: storage/test.sqlite3
+  primary:
+    <<: *default
+    database: storage/test_primary.sqlite3
+  sandbox:
+    <<: *default
+    database: storage/test_sandbox.sqlite3
 
 production:
   primary:

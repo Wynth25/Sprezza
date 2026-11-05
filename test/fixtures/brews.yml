@@ -2,12 +2,12 @@
 
 one:
   recipe: one
-  dose: 1.5
-  grind: 1.5
-  rating: MyString
+  dose: 18.0
+  grind: 4.0
+  star: false
 
 two:
   recipe: two
-  dose: 1.5
-  grind: 1.5
-  rating: MyString
+  dose: 18.0
+  grind: 4.0
+  star: false

@@ -35,7 +35,7 @@
         style="--desktop-cols: <%= desktop_cols %>; --mobile-cols: <%= mobile_cols %>;">
     <% unless admin_logged_in? %>
       <div class="sandbox-banner" style="background: #f4efe6; border: 1px solid #e2dacd; border-radius: 14px; padding: 7px 14px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 0.85rem; color: var(--text-brown, #5c4033); box-sizing: border-box;">
-        <span><i class="fa-solid fa-flask"></i> <strong>Sandbox Mode:</strong> Local to this tab &amp; resets after 15m inactivity.</span>
+        <span><i class="fa-solid fa-flask"></i> <strong>Sandbox Mode:</strong> Resets after 15m inactivity.</span>
         <button type="button" data-action="click->sandbox#resetSandbox" style="background: #e8e0d2; border: 1px solid #d3c7b5; border-radius: 12px; padding: 3px 10px; margin: 0; font-size: 0.75rem; font-weight: 700; cursor: pointer; color: var(--header-brown, #3d2817); flex-shrink: 0;">
           <i class="fa-solid fa-rotate-left"></i> Reset
         </button>
