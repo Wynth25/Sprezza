@@ -1675,6 +1675,73 @@ input[type="date"] {
   color: #ffffff !important;
 }
 
+/* History Card Edit Controls */
+.history-edit-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.history-arrow-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1.5px solid var(--btn-bg);
+  background-color: var(--bg-beige, #f9f6f0);
+  color: var(--text-brown);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.75rem;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.history-arrow-btn:hover {
+  background-color: var(--accent);
+  color: #ffffff;
+  border-color: var(--accent);
+}
+
+.history-arrow-btn:active {
+  transform: scale(0.92);
+}
+
+.history-edit-value {
+  min-width: 48px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.35rem;
+  line-height: 1.2;
+  color: var(--header-brown);
+}
+
+.history-action-btn.btn-save-brew {
+  background-color: #16a34a !important;
+  color: #ffffff !important;
+}
+
+.history-action-btn.btn-save-brew:hover {
+  background-color: #15803d !important;
+}
+
+.history-action-btn.btn-discard-brew {
+  background-color: #fce8e8 !important;
+  color: #b91c1c !important;
+}
+
+.history-action-btn.btn-discard-brew:hover {
+  background-color: #dc2626 !important;
+  color: #ffffff !important;
+}
+
+.history-card.is-editing {
+  border-color: var(--accent);
+  box-shadow: 0 4px 12px rgba(89, 64, 47, 0.12);
+}
+
 .history-card-divider-h {
   height: 1.5px;
   background-color: var(--btn-bg);

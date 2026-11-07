@@ -46,7 +46,15 @@ class BrewsController < ApplicationController
     respond_to do |format|
       if @brew.update(clean_params)
         format.html { redirect_back fallback_location: root_path, notice: "Brew was successfully updated." }
-        format.json { render json: { id: @brew.id, star: (@brew.has_attribute?(:star) ? @brew.star : true), starred_at: (@brew.respond_to?(:starred_at) ? @brew.starred_at : nil) }, status: :ok }
+        format.json { 
+          render json: { 
+            id: @brew.id, 
+            dose: @brew.dose,
+            grind: @brew.grind,
+            star: (@brew.has_attribute?(:star) ? @brew.star : true), 
+            starred_at: (@brew.respond_to?(:starred_at) ? @brew.starred_at : nil) 
+          }, status: :ok 
+        }
       else
         format.html { render :edit, status: :unprocessable_content }
         format.json { render json: @brew.errors, status: :unprocessable_content }

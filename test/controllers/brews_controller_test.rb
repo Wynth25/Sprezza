@@ -39,6 +39,15 @@ class BrewsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_path
   end
 
+  test "should update brew json format" do
+    patch brew_url(@brew), params: { brew: { dose: 19.2, grind: 4.8 } }, as: :json
+    assert_response :success
+    data = JSON.parse(response.body)
+    assert_equal 19.2, data["dose"]
+    assert_equal 4.8, data["grind"]
+    assert_equal @brew.id, data["id"]
+  end
+
   test "should toggle star on brew" do
     patch toggle_star_brew_url(@brew), params: { star: true }, as: :json
     assert_response :success
