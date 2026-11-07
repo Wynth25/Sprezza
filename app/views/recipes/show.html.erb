@@ -78,6 +78,7 @@
                data-brew-history-edit-is-starred-value="<%= is_starred %>"
                data-brew-history-edit-starred-date-value="<%= starred_date_val %>"
                data-brew-history-edit-roast-date-value="<%= @recipe.bean&.roast_date&.strftime("%Y-%m-%d") %>"
+               data-brew-history-edit-notes-value="<%= brew_notes || "" %>"
                data-brew-history-edit-is-latest-value="<%= is_latest %>">
             <div class="history-card-main">
               <!-- Regular View Stats -->
@@ -191,12 +192,23 @@
               </div>
             </div>
 
-            <% if brew_notes.present? %>
+            <!-- Regular View Notes -->
+            <div data-brew-history-edit-target="viewNotes" class="<%= 'hidden' unless brew_notes.present? %>">
               <div class="history-card-divider-h"></div>
-              <div class="history-card-notes">
+              <div class="history-card-notes" data-brew-history-edit-target="notesDisplay">
                 <%= brew_notes %>
               </div>
-            <% end %>
+            </div>
+
+            <!-- Edit View Notes Textarea -->
+            <div data-brew-history-edit-target="editNotes" class="hidden">
+              <div class="history-card-divider-h"></div>
+              <textarea class="history-notes-input" 
+                        placeholder="Add or edit brew notes..." 
+                        rows="2"
+                        data-brew-history-edit-target="notesInput"
+                        data-action="input->brew-history-edit#onNotesInput"><%= brew_notes %></textarea>
+            </div>
           </div>
         <% end %>
       <% else %>

@@ -1820,6 +1820,28 @@ input[type="date"] {
   word-break: break-word;
 }
 
+.history-notes-input {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  border-radius: 10px !important;
+  border: 1.5px solid var(--btn-bg, #eaddcf) !important;
+  background-color: #ffffff !important;
+  color: var(--header-brown, #382e24) !important;
+  padding: 8px 10px !important;
+  font-family: inherit !important;
+  font-size: 0.9rem !important;
+  line-height: 1.4 !important;
+  resize: vertical !important;
+  outline: none !important;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  min-height: 52px;
+}
+
+.history-notes-input:focus {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 2px rgba(184, 149, 115, 0.2) !important;
+}
+
 /* Style Segmented Selector for Recipe Form */
 .style-selector-container {
   display: flex;

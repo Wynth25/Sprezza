@@ -4,10 +4,13 @@ export default class extends Controller {
   static targets = [
     "viewStats", "editStats",
     "viewInfo", "editInfo",
+    "viewNotes", "editNotes",
     "doseDisplay", "grindDisplay",
     "dateDisplay", "ageDisplay",
+    "notesDisplay",
     "doseInput", "grindInput",
     "datetimeInput",
+    "notesInput",
     "starDateContainer", "starDateToggleBtn", "starDatePopup", "starDateInput",
     "editBtn", "starBtn",
     "saveBtn", "discardBtn"
@@ -19,6 +22,7 @@ export default class extends Controller {
     grind: Number,
     createdAt: String,
     starredDate: String,
+    notes: String,
     isStarred: Boolean,
     roastDate: String,
     isLatest: Boolean
@@ -29,11 +33,13 @@ export default class extends Controller {
     this.originalGrind = this.grindValue
     this.originalCreatedAt = this.createdAtValue
     this.originalStarredDate = this.starredDateValue || ""
+    this.originalNotes = this.notesValue || ""
 
     this.currentDose = this.doseValue
     this.currentGrind = this.grindValue
     this.currentCreatedAt = this.createdAtValue
     this.currentStarredDate = this.starredDateValue || ""
+    this.currentNotes = this.notesValue || ""
 
     this.confirmingDiscard = false
     this.boundDocClick = this.onDocumentClick.bind(this)
@@ -84,16 +90,19 @@ export default class extends Controller {
     this.originalGrind = this.grindValue
     this.originalCreatedAt = this.createdAtValue
     this.originalStarredDate = this.starredDateValue || ""
+    this.originalNotes = this.notesValue || ""
 
     this.currentDose = this.doseValue
     this.currentGrind = this.grindValue
     this.currentCreatedAt = this.createdAtValue
     this.currentStarredDate = this.starredDateValue || ""
+    this.currentNotes = this.notesValue || ""
 
     if (this.hasDoseInputTarget) this.doseInputTarget.value = this.currentDose.toFixed(1)
     if (this.hasGrindInputTarget) this.grindInputTarget.value = this.currentGrind.toFixed(1)
     if (this.hasDatetimeInputTarget) this.datetimeInputTarget.value = this.currentCreatedAt
     if (this.hasStarDateInputTarget) this.starDateInputTarget.value = this.currentStarredDate
+    if (this.hasNotesInputTarget) this.notesInputTarget.value = this.currentNotes
 
     if (this.hasStarDateContainerTarget) {
       this.starDateContainerTarget.classList.toggle("hidden", !this.isStarredValue)
@@ -107,6 +116,9 @@ export default class extends Controller {
 
     if (this.hasViewInfoTarget) this.viewInfoTarget.classList.add("hidden")
     if (this.hasEditInfoTarget) this.editInfoTarget.classList.remove("hidden")
+
+    if (this.hasViewNotesTarget) this.viewNotesTarget.classList.add("hidden")
+    if (this.hasEditNotesTarget) this.editNotesTarget.classList.remove("hidden")
 
     this.editBtnTarget.classList.add("hidden")
     if (this.hasStarBtnTarget) this.starBtnTarget.classList.add("hidden")
@@ -177,12 +189,20 @@ export default class extends Controller {
     this.resetDiscardConfirm()
   }
 
+  onNotesInput() {
+    if (this.hasNotesInputTarget) {
+      this.currentNotes = this.notesInputTarget.value
+    }
+    this.resetDiscardConfirm()
+  }
+
   hasChanges() {
     const doseDiff = Math.abs(this.currentDose - this.originalDose)
     const grindDiff = Math.abs(this.currentGrind - this.originalGrind)
     const dateChanged = this.currentCreatedAt !== this.originalCreatedAt
     const starDateChanged = this.currentStarredDate !== this.originalStarredDate
-    return doseDiff >= 0.05 || grindDiff >= 0.05 || dateChanged || starDateChanged
+    const notesChanged = (this.currentNotes || "").trim() !== (this.originalNotes || "").trim()
+    return doseDiff >= 0.05 || grindDiff >= 0.05 || dateChanged || starDateChanged || notesChanged
   }
 
   discard(event) {
@@ -205,6 +225,7 @@ export default class extends Controller {
     this.currentGrind = this.originalGrind
     this.currentCreatedAt = this.originalCreatedAt
     this.currentStarredDate = this.originalStarredDate
+    this.currentNotes = this.originalNotes
     this.renderDisplayValues()
     this.exitEditMode()
   }
@@ -238,20 +259,26 @@ export default class extends Controller {
     if (this.hasStarDateInputTarget && this.starDateInputTarget.value) {
       this.currentStarredDate = this.starDateInputTarget.value
     }
+    if (this.hasNotesInputTarget) {
+      this.currentNotes = this.notesInputTarget.value
+    }
 
     const newDose = this.currentDose
     const newGrind = this.currentGrind
     const newCreatedAt = this.currentCreatedAt
     const newStarredDate = this.currentStarredDate
+    const newNotes = (this.currentNotes || "").trim()
 
     this.doseValue = newDose
     this.grindValue = newGrind
     this.createdAtValue = newCreatedAt
     this.starredDateValue = newStarredDate
+    this.notesValue = newNotes
     this.originalDose = newDose
     this.originalGrind = newGrind
     this.originalCreatedAt = newCreatedAt
     this.originalStarredDate = newStarredDate
+    this.originalNotes = newNotes
 
     this.renderDisplayValues()
     this.exitEditMode()
@@ -268,7 +295,8 @@ export default class extends Controller {
         brew: {
           dose: newDose,
           grind: newGrind,
-          created_at: newCreatedAt
+          created_at: newCreatedAt,
+          notes: newNotes
         }
       }
       if (this.isStarredValue && newStarredDate) {
@@ -298,6 +326,7 @@ export default class extends Controller {
         if (parsed.brews && parsed.brews[this.brewIdValue]) {
           parsed.brews[this.brewIdValue].dose = newDose
           parsed.brews[this.brewIdValue].grind = newGrind
+          parsed.brews[this.brewIdValue].notes = newNotes
           parsed.brews[this.brewIdValue].createdAt = new Date(newCreatedAt).toISOString()
           if (this.isStarredValue && newStarredDate) {
             parsed.brews[this.brewIdValue].starredAt = `${newStarredDate}T12:00:00.000Z`
@@ -342,6 +371,15 @@ export default class extends Controller {
       }
     }
 
+    // Update notes display
+    const trimmedNotes = (this.currentNotes || "").trim()
+    if (this.hasNotesDisplayTarget) {
+      this.notesDisplayTarget.textContent = trimmedNotes
+    }
+    if (this.hasViewNotesTarget) {
+      this.viewNotesTarget.classList.toggle("hidden", trimmedNotes.length === 0)
+    }
+
     // Update age display if present
     const ageEl = this.element.querySelector(".history-card-age")
     if (ageEl) {
@@ -381,6 +419,12 @@ export default class extends Controller {
 
     if (this.hasViewInfoTarget) this.viewInfoTarget.classList.remove("hidden")
     if (this.hasEditInfoTarget) this.editInfoTarget.classList.add("hidden")
+
+    if (this.hasViewNotesTarget) {
+      const trimmedNotes = (this.currentNotes || "").trim()
+      this.viewNotesTarget.classList.toggle("hidden", trimmedNotes.length === 0)
+    }
+    if (this.hasEditNotesTarget) this.editNotesTarget.classList.add("hidden")
 
     this.editBtnTarget.classList.remove("hidden")
     if (this.hasStarBtnTarget) this.starBtnTarget.classList.remove("hidden")
