@@ -127,6 +127,7 @@
                 <div class="hidden" data-brew-history-edit-target="editInfo">
                   <input type="datetime-local" 
                          class="history-datetime-input"
+                         max="<%= Time.current.strftime("%Y-%m-%dT%H:%M") %>"
                          data-brew-history-edit-target="datetimeInput"
                          data-action="input->brew-history-edit#onDatetimeInput"
                          value="<%= brew.created_at.strftime("%Y-%m-%dT%H:%M") %>">
@@ -145,6 +146,8 @@
                       <input type="date" 
                              class="history-datetime-input"
                              style="max-width: 150px !important;"
+                             min="<%= brew.created_at.strftime("%Y-%m-%d") %>"
+                             max="<%= Date.current.strftime("%Y-%m-%d") %>"
                              data-brew-history-edit-target="starDateInput"
                              data-action="input->brew-history-edit#onStarDateInput"
                              value="<%= starred_date_val %>">

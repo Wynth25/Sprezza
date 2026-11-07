@@ -194,12 +194,23 @@ export default class extends Controller {
   }
 
   validateDates() {
+    const todayStr = new Date().toISOString().split("T")[0]
+
+    // Restrict star date picker bounds (min: creation day, max: today)
+    if (this.hasStarDateInputTarget) {
+      if (this.currentCreatedAt) {
+        const createdDay = this.currentCreatedAt.split("T")[0]
+        this.starDateInputTarget.min = createdDay
+      }
+      this.starDateInputTarget.max = todayStr
+    }
+
     if (!this.hasSaveBtnTarget) return
 
     let isValid = true
     if (this.isStarredValue && this.currentStarredDate && this.currentCreatedAt) {
       const createdDay = this.currentCreatedAt.split("T")[0]
-      if (this.currentStarredDate < createdDay) {
+      if (this.currentStarredDate < createdDay || this.currentStarredDate > todayStr) {
         isValid = false
       }
     }
