@@ -874,20 +874,21 @@ input[type="date"] {
 }
 
 .grid-toggle-btn {
-  flex: 1;
-  padding: 14px 16px;
-  border-radius: 14px;
+  padding: 8px 12px;
+  border-radius: 12px;
   font-weight: 700;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
   background-color: var(--bg-beige, #f9f6f0);
-  border: 2px solid var(--btn-bg, #eaddcf);
+  border: 1.5px solid var(--btn-bg, #eaddcf);
   color: var(--text-brown, #5c4033);
   cursor: pointer;
-  font-size: 0.95rem;
+  font-size: 1.1rem;
   transition: all 0.2s ease;
+  min-width: 44px;
+  height: 38px;
 }
 
 .grid-toggle-btn:hover {
@@ -900,6 +901,78 @@ input[type="date"] {
   border-color: var(--header-brown, #382e24);
   box-shadow: 0 2px 8px rgba(56, 46, 36, 0.2);
 }
+
+/* Settings compact row styles */
+.settings-compact-box {
+  background: var(--bg-beige, #f9f6f0);
+  border: 1.5px solid var(--btn-bg, #eaddcf);
+  border-radius: 14px;
+  padding: 12px 16px;
+}
+
+.settings-compact-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.settings-row-label {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--header-brown, #382e24);
+  flex-shrink: 0;
+}
+
+.settings-inputs-pair {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.settings-input-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  width: 86px;
+  justify-content: flex-start;
+}
+
+.settings-number-input {
+  width: 58px !important;
+  max-width: 58px !important;
+  height: 34px !important;
+  padding: 4px 6px !important;
+  border-radius: 8px !important;
+  border: 1.5px solid var(--btn-bg, #eaddcf) !important;
+  background: #ffffff !important;
+  color: var(--header-brown, #382e24) !important;
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+  outline: none !important;
+  transition: border-color 0.2s, box-shadow 0.2s !important;
+  flex-shrink: 0;
+}
+
+.settings-number-input:focus {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 2px rgba(184, 149, 115, 0.2) !important;
+}
+
+.settings-unit {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-brown, #5c4033);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  flex-shrink: 0;
+}
+
 
 /* Extra spacing: lift the dose slightly away from the grind on dashboard cards */
 .recipe-grid .recipe-stat-dose {
