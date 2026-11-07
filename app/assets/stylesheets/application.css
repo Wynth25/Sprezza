@@ -1777,6 +1777,12 @@ input[type="date"] {
   color: #ffffff !important;
 }
 
+.history-action-btn.btn-save-brew:disabled {
+  opacity: 0.35 !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+}
+
 /* Discard (X-mark) icon - Pink by default, turns red on confirm press */
 .history-action-btn.btn-discard-brew {
   background-color: #fce8e8 !important;

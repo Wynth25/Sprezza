@@ -128,6 +128,8 @@ export default class extends Controller {
 
     this.element.classList.add("is-editing")
 
+    this.validateDates()
+
     if (this.hasDoseInputTarget) {
       setTimeout(() => this.doseInputTarget.focus(), 50)
     }
@@ -180,6 +182,7 @@ export default class extends Controller {
       this.currentCreatedAt = this.datetimeInputTarget.value
     }
     this.resetDiscardConfirm()
+    this.validateDates()
   }
 
   onStarDateInput() {
@@ -187,6 +190,21 @@ export default class extends Controller {
       this.currentStarredDate = this.starDateInputTarget.value
     }
     this.resetDiscardConfirm()
+    this.validateDates()
+  }
+
+  validateDates() {
+    if (!this.hasSaveBtnTarget) return
+
+    let isValid = true
+    if (this.isStarredValue && this.currentStarredDate && this.currentCreatedAt) {
+      const createdDay = this.currentCreatedAt.split("T")[0]
+      if (this.currentStarredDate < createdDay) {
+        isValid = false
+      }
+    }
+
+    this.saveBtnTarget.disabled = !isValid
   }
 
   onNotesInput() {
@@ -243,6 +261,9 @@ export default class extends Controller {
       event.preventDefault()
       event.stopPropagation()
     }
+
+    // Guard against save if invalid
+    if (this.hasSaveBtnTarget && this.saveBtnTarget.disabled) return
 
     // Read latest values from inputs
     if (this.hasDoseInputTarget) {
