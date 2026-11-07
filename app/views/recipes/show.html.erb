@@ -63,6 +63,10 @@
               end
             end
           %>
+          <%
+            raw_starred_at = brew.respond_to?(:starred_at) && brew.starred_at.present? ? brew.starred_at : brew.created_at
+            starred_at_val = raw_starred_at ? raw_starred_at.strftime("%Y-%m-%dT%H:%M") : ""
+          %>
           <div class="history-card <%= 'starred' if is_starred %>" 
                data-brew-id="<%= brew.id %>"
                data-controller="brew-history-edit"
@@ -71,6 +75,9 @@
                data-brew-history-edit-dose-value="<%= brew.dose %>"
                data-brew-history-edit-grind-value="<%= brew.grind %>"
                data-brew-history-edit-created-at-value="<%= brew.created_at.strftime("%Y-%m-%dT%H:%M") %>"
+               data-brew-history-edit-is-starred-value="<%= is_starred %>"
+               data-brew-history-edit-starred-at-value="<%= starred_at_val %>"
+               data-brew-history-edit-roast-date-value="<%= @recipe.bean&.roast_date&.strftime("%Y-%m-%d") %>"
                data-brew-history-edit-is-latest-value="<%= is_latest %>">
             <div class="history-card-main">
               <!-- Regular View Stats -->
@@ -122,6 +129,27 @@
                          data-brew-history-edit-target="datetimeInput"
                          data-action="input->brew-history-edit#onDatetimeInput"
                          value="<%= brew.created_at.strftime("%Y-%m-%dT%H:%M") %>">
+
+                  <% if is_starred %>
+                    <div style="margin-top: 6px;">
+                      <button type="button" 
+                              class="history-star-date-toggle-btn" 
+                              data-brew-history-edit-target="starDateToggleBtn"
+                              data-action="click->brew-history-edit#toggleStarDatePopup"
+                              title="Edit starred date">
+                        <i class="fa-solid fa-star" style="color: #d97706;"></i>
+                        <span>Starred Date</span>
+                      </button>
+
+                      <div class="history-star-date-popup hidden" data-brew-history-edit-target="starDatePopup">
+                        <input type="datetime-local" 
+                               class="history-datetime-input"
+                               data-brew-history-edit-target="starDatetimeInput"
+                               data-action="input->brew-history-edit#onStarDatetimeInput"
+                               value="<%= starred_at_val %>">
+                      </div>
+                    </div>
+                  <% end %>
                 </div>
               </div>
 

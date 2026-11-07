@@ -38,7 +38,7 @@ class BrewsController < ApplicationController
   # PATCH/PUT /brews/1 or /brews/1.json
   def update
     clean_params = brew_params.select { |k, _| @brew.has_attribute?(k) }
-    if clean_params.key?(:star) && @brew.has_attribute?(:starred_at)
+    if clean_params.key?(:star) && @brew.has_attribute?(:starred_at) && !clean_params.key?(:starred_at)
       is_star = ActiveModel::Type::Boolean.new.cast(clean_params[:star])
       clean_params[:starred_at] = is_star ? Time.current : nil
     end
@@ -53,7 +53,7 @@ class BrewsController < ApplicationController
             grind: @brew.grind,
             created_at: @brew.created_at.iso8601,
             star: (@brew.has_attribute?(:star) ? @brew.star : true), 
-            starred_at: (@brew.respond_to?(:starred_at) ? @brew.starred_at : nil) 
+            starred_at: (@brew.respond_to?(:starred_at) && @brew.starred_at ? @brew.starred_at.iso8601 : nil) 
           }, status: :ok 
         }
       else

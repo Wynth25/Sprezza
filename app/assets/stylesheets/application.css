@@ -1716,7 +1716,7 @@ input[type="date"] {
 
 .history-datetime-input {
   width: 100% !important;
-  max-width: 185px !important;
+  max-width: 200px !important;
   height: 36px !important;
   padding: 4px 8px !important;
   border-radius: 8px !important;
@@ -1733,6 +1733,37 @@ input[type="date"] {
 .history-datetime-input:focus {
   border-color: var(--accent) !important;
   box-shadow: 0 0 0 2px rgba(184, 149, 115, 0.2) !important;
+}
+
+.history-star-date-toggle-btn {
+  background: none;
+  border: none;
+  color: var(--header-brown);
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.history-star-date-toggle-btn:hover {
+  background-color: var(--btn-bg);
+}
+
+.history-star-date-toggle-btn.active {
+  background-color: var(--btn-hover);
+  color: var(--header-brown);
+}
+
+/* Star date popup editor */
+.history-star-date-popup {
+  position: relative;
+  margin-top: 4px;
 }
 
 /* Save (Checkmark) icon - Keep standard beige button color */
