@@ -194,7 +194,17 @@ export default class extends Controller {
   }
 
   validateDates() {
-    const todayStr = new Date().toISOString().split("T")[0]
+    const now = new Date()
+    const todayStr = now.toISOString().split("T")[0]
+    const currentDatetimeStr = now.toISOString().slice(0, 16)
+
+    // Restrict brew datetime picker bounds (min: roast date, max: now)
+    if (this.hasDatetimeInputTarget) {
+      if (this.hasRoastDateValue && this.roastDateValue) {
+        this.datetimeInputTarget.min = `${this.roastDateValue}T00:00`
+      }
+      this.datetimeInputTarget.max = currentDatetimeStr
+    }
 
     // Restrict star date picker bounds (min: creation day, max: today)
     if (this.hasStarDateInputTarget) {
@@ -208,6 +218,22 @@ export default class extends Controller {
     if (!this.hasSaveBtnTarget) return
 
     let isValid = true
+
+    // Check brew creation date/time bounds
+    if (this.currentCreatedAt) {
+      if (this.hasRoastDateValue && this.roastDateValue) {
+        const roastDay = this.roastDateValue
+        const createdDay = this.currentCreatedAt.split("T")[0]
+        if (createdDay < roastDay) {
+          isValid = false
+        }
+      }
+      if (this.currentCreatedAt > currentDatetimeStr) {
+        isValid = false
+      }
+    }
+
+    // Check star date bounds
     if (this.isStarredValue && this.currentStarredDate && this.currentCreatedAt) {
       const createdDay = this.currentCreatedAt.split("T")[0]
       if (this.currentStarredDate < createdDay || this.currentStarredDate > todayStr) {

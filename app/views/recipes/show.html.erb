@@ -125,8 +125,12 @@
 
                 <!-- Edit View Date & Time Picker -->
                 <div class="hidden" data-brew-history-edit-target="editInfo">
+                  <%
+                    roast_min_datetime = @recipe.bean&.roast_date ? "#{@recipe.bean.roast_date.strftime("%Y-%m-%d")}T00:00" : ""
+                  %>
                   <input type="datetime-local" 
                          class="history-datetime-input"
+                         <%= "min=\"#{roast_min_datetime}\"".html_safe if roast_min_datetime.present? %>
                          max="<%= Time.current.strftime("%Y-%m-%dT%H:%M") %>"
                          data-brew-history-edit-target="datetimeInput"
                          data-action="input->brew-history-edit#onDatetimeInput"
