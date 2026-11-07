@@ -1683,8 +1683,8 @@ input[type="date"] {
 }
 
 .history-number-input {
-  width: 50px !important;
-  max-width: 50px !important;
+  width: 72px !important;
+  max-width: 72px !important;
   height: 34px !important;
   padding: 4px 2px !important;
   border-radius: 8px;
@@ -1712,6 +1712,27 @@ input[type="date"] {
   margin-left: 2px;
   display: inline-flex;
   align-items: center;
+}
+
+.history-datetime-input {
+  width: 100% !important;
+  max-width: 185px !important;
+  height: 36px !important;
+  padding: 4px 8px !important;
+  border-radius: 8px !important;
+  border: 1.5px solid var(--btn-bg, #eaddcf) !important;
+  background: #ffffff !important;
+  color: var(--header-brown, #382e24) !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  box-sizing: border-box !important;
+  outline: none !important;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.history-datetime-input:focus {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 2px rgba(184, 149, 115, 0.2) !important;
 }
 
 /* Save (Checkmark) icon - Keep standard beige button color */

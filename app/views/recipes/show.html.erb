@@ -70,6 +70,7 @@
                data-brew-history-edit-brew-id-value="<%= brew.id %>"
                data-brew-history-edit-dose-value="<%= brew.dose %>"
                data-brew-history-edit-grind-value="<%= brew.grind %>"
+               data-brew-history-edit-created-at-value="<%= brew.created_at.strftime("%Y-%m-%dT%H:%M") %>"
                data-brew-history-edit-is-latest-value="<%= is_latest %>">
             <div class="history-card-main">
               <!-- Regular View Stats -->
@@ -85,7 +86,7 @@
                          step="0.1" 
                          min="0.1" 
                          class="history-number-input"
-                         style="width: 50px !important; max-width: 50px !important;"
+                         style="width: 72px !important; max-width: 72px !important;"
                          data-brew-history-edit-target="doseInput"
                          data-action="input->brew-history-edit#onDoseInput"
                          value="<%= brew.dose %>">
@@ -97,7 +98,7 @@
                          step="0.1" 
                          min="0.1" 
                          class="history-number-input"
-                         style="width: 50px !important; max-width: 50px !important;"
+                         style="width: 72px !important; max-width: 72px !important;"
                          data-brew-history-edit-target="grindInput"
                          data-action="input->brew-history-edit#onGrindInput"
                          value="<%= brew.grind %>">
@@ -108,8 +109,20 @@
               <div class="history-card-divider-v"></div>
 
               <div class="history-card-info">
-                <div class="history-card-date"><%= date_formatted %></div>
-                <div class="history-card-age" data-created-at="<%= brew.created_at.iso8601 %>" data-bean-age="<%= @recipe.bean&.effective_age_in_days %>"><%= age_formatted %></div>
+                <!-- Regular View Date & Age -->
+                <div data-brew-history-edit-target="viewInfo">
+                  <div class="history-card-date" data-brew-history-edit-target="dateDisplay"><%= date_formatted %></div>
+                  <div class="history-card-age" data-created-at="<%= brew.created_at.iso8601 %>" data-bean-age="<%= @recipe.bean&.effective_age_in_days %>"><%= age_formatted %></div>
+                </div>
+
+                <!-- Edit View Date & Time Picker -->
+                <div class="hidden" data-brew-history-edit-target="editInfo">
+                  <input type="datetime-local" 
+                         class="history-datetime-input"
+                         data-brew-history-edit-target="datetimeInput"
+                         data-action="input->brew-history-edit#onDatetimeInput"
+                         value="<%= brew.created_at.strftime("%Y-%m-%dT%H:%M") %>">
+                </div>
               </div>
 
               <div class="history-card-actions">

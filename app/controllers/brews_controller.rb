@@ -51,6 +51,7 @@ class BrewsController < ApplicationController
             id: @brew.id, 
             dose: @brew.dose,
             grind: @brew.grind,
+            created_at: @brew.created_at.iso8601,
             star: (@brew.has_attribute?(:star) ? @brew.star : true), 
             starred_at: (@brew.respond_to?(:starred_at) ? @brew.starred_at : nil) 
           }, status: :ok 
@@ -95,6 +96,6 @@ class BrewsController < ApplicationController
   end
 
   def brew_params
-    params.require(:brew).permit(:recipe_id, :dose, :grind, :star, :starred_at, :notes)
+    params.require(:brew).permit(:recipe_id, :dose, :grind, :star, :starred_at, :notes, :created_at)
   end
 end
