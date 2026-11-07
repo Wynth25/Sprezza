@@ -60,9 +60,31 @@ export default class extends Controller {
           "X-CSRF-Token": csrfToken
         },
         body: JSON.stringify({ brew: { star: this.starredValue }, star: this.starredValue })
-      }).catch(err => {
+      })
+      .then(res => res.json())
+      .then(data => {
+        // Synchronize history-edit controller if present on the same card
+        const card = this.element.closest(".history-card")
+        if (card) {
+          const editCtrl = this.application.getControllerForElementAndIdentifier(card, "brew-history-edit")
+          if (editCtrl) {
+            editCtrl.syncStarState(data.star, data.starred_at)
+          }
+        }
+      })
+      .catch(err => {
         console.warn("Could not save star to server:", err)
       })
+    }
+
+    // Synchronize history-edit controller immediately in DOM
+    const card = this.element.closest(".history-card")
+    if (card) {
+      const editCtrl = this.application.getControllerForElementAndIdentifier(card, "brew-history-edit")
+      if (editCtrl) {
+        const todayStr = new Date().toISOString().split("T")[0]
+        editCtrl.syncStarState(this.starredValue, this.starredValue ? todayStr : "")
+      }
     }
 
     const sandboxStateRaw = sessionStorage.getItem("sprezza_sandbox_state")

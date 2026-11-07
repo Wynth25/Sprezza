@@ -8,7 +8,7 @@ export default class extends Controller {
     "dateDisplay", "ageDisplay",
     "doseInput", "grindInput",
     "datetimeInput",
-    "starDateToggleBtn", "starDatePopup", "starDatetimeInput",
+    "starDateContainer", "starDateToggleBtn", "starDatePopup", "starDateInput",
     "editBtn", "starBtn",
     "saveBtn", "discardBtn"
   ]
@@ -18,7 +18,7 @@ export default class extends Controller {
     dose: Number,
     grind: Number,
     createdAt: String,
-    starredAt: String,
+    starredDate: String,
     isStarred: Boolean,
     roastDate: String,
     isLatest: Boolean
@@ -28,12 +28,12 @@ export default class extends Controller {
     this.originalDose = this.doseValue
     this.originalGrind = this.grindValue
     this.originalCreatedAt = this.createdAtValue
-    this.originalStarredAt = this.starredAtValue || ""
+    this.originalStarredDate = this.starredDateValue || ""
 
     this.currentDose = this.doseValue
     this.currentGrind = this.grindValue
     this.currentCreatedAt = this.createdAtValue
-    this.currentStarredAt = this.starredAtValue || ""
+    this.currentStarredDate = this.starredDateValue || ""
 
     this.confirmingDiscard = false
     this.boundDocClick = this.onDocumentClick.bind(this)
@@ -50,6 +50,31 @@ export default class extends Controller {
     }
   }
 
+  syncStarState(isStarred, starredDateOrAt) {
+    this.isStarredValue = isStarred
+    if (isStarred) {
+      // Extract YYYY-MM-DD
+      const datePart = starredDateOrAt ? starredDateOrAt.split("T")[0] : new Date().toISOString().split("T")[0]
+      this.starredDateValue = datePart
+      this.currentStarredDate = datePart
+      this.originalStarredDate = datePart
+      if (this.hasStarDateInputTarget) {
+        this.starDateInputTarget.value = datePart
+      }
+      if (this.hasStarDateContainerTarget) {
+        this.starDateContainerTarget.classList.remove("hidden")
+      }
+    } else {
+      this.starredDateValue = ""
+      this.currentStarredDate = ""
+      this.originalStarredDate = ""
+      if (this.hasStarDateContainerTarget) {
+        this.starDateContainerTarget.classList.add("hidden")
+      }
+      this.closeStarDatePopup()
+    }
+  }
+
   startEdit(event) {
     if (event) {
       event.preventDefault()
@@ -58,17 +83,21 @@ export default class extends Controller {
     this.originalDose = this.doseValue
     this.originalGrind = this.grindValue
     this.originalCreatedAt = this.createdAtValue
-    this.originalStarredAt = this.starredAtValue || ""
+    this.originalStarredDate = this.starredDateValue || ""
 
     this.currentDose = this.doseValue
     this.currentGrind = this.grindValue
     this.currentCreatedAt = this.createdAtValue
-    this.currentStarredAt = this.starredAtValue || ""
+    this.currentStarredDate = this.starredDateValue || ""
 
     if (this.hasDoseInputTarget) this.doseInputTarget.value = this.currentDose.toFixed(1)
     if (this.hasGrindInputTarget) this.grindInputTarget.value = this.currentGrind.toFixed(1)
     if (this.hasDatetimeInputTarget) this.datetimeInputTarget.value = this.currentCreatedAt
-    if (this.hasStarDatetimeInputTarget) this.starDatetimeInputTarget.value = this.currentStarredAt
+    if (this.hasStarDateInputTarget) this.starDateInputTarget.value = this.currentStarredDate
+
+    if (this.hasStarDateContainerTarget) {
+      this.starDateContainerTarget.classList.toggle("hidden", !this.isStarredValue)
+    }
 
     this.resetDiscardConfirm()
     this.closeStarDatePopup()
@@ -104,8 +133,8 @@ export default class extends Controller {
     if (this.hasStarDateToggleBtnTarget) {
       this.starDateToggleBtnTarget.classList.toggle("active", isVisible)
     }
-    if (isVisible && this.hasStarDatetimeInputTarget) {
-      this.starDatetimeInputTarget.focus()
+    if (isVisible && this.hasStarDateInputTarget) {
+      this.starDateInputTarget.focus()
     }
   }
 
@@ -141,9 +170,9 @@ export default class extends Controller {
     this.resetDiscardConfirm()
   }
 
-  onStarDatetimeInput() {
-    if (this.hasStarDatetimeInputTarget && this.starDatetimeInputTarget.value) {
-      this.currentStarredAt = this.starDatetimeInputTarget.value
+  onStarDateInput() {
+    if (this.hasStarDateInputTarget && this.starDateInputTarget.value) {
+      this.currentStarredDate = this.starDateInputTarget.value
     }
     this.resetDiscardConfirm()
   }
@@ -152,7 +181,7 @@ export default class extends Controller {
     const doseDiff = Math.abs(this.currentDose - this.originalDose)
     const grindDiff = Math.abs(this.currentGrind - this.originalGrind)
     const dateChanged = this.currentCreatedAt !== this.originalCreatedAt
-    const starDateChanged = this.currentStarredAt !== this.originalStarredAt
+    const starDateChanged = this.currentStarredDate !== this.originalStarredDate
     return doseDiff >= 0.05 || grindDiff >= 0.05 || dateChanged || starDateChanged
   }
 
@@ -175,7 +204,7 @@ export default class extends Controller {
     this.currentDose = this.originalDose
     this.currentGrind = this.originalGrind
     this.currentCreatedAt = this.originalCreatedAt
-    this.currentStarredAt = this.originalStarredAt
+    this.currentStarredDate = this.originalStarredDate
     this.renderDisplayValues()
     this.exitEditMode()
   }
@@ -206,23 +235,23 @@ export default class extends Controller {
     if (this.hasDatetimeInputTarget && this.datetimeInputTarget.value) {
       this.currentCreatedAt = this.datetimeInputTarget.value
     }
-    if (this.hasStarDatetimeInputTarget && this.starDatetimeInputTarget.value) {
-      this.currentStarredAt = this.starDatetimeInputTarget.value
+    if (this.hasStarDateInputTarget && this.starDateInputTarget.value) {
+      this.currentStarredDate = this.starDateInputTarget.value
     }
 
     const newDose = this.currentDose
     const newGrind = this.currentGrind
     const newCreatedAt = this.currentCreatedAt
-    const newStarredAt = this.currentStarredAt
+    const newStarredDate = this.currentStarredDate
 
     this.doseValue = newDose
     this.grindValue = newGrind
     this.createdAtValue = newCreatedAt
-    this.starredAtValue = newStarredAt
+    this.starredDateValue = newStarredDate
     this.originalDose = newDose
     this.originalGrind = newGrind
     this.originalCreatedAt = newCreatedAt
-    this.originalStarredAt = newStarredAt
+    this.originalStarredDate = newStarredDate
 
     this.renderDisplayValues()
     this.exitEditMode()
@@ -242,8 +271,8 @@ export default class extends Controller {
           created_at: newCreatedAt
         }
       }
-      if (this.isStarredValue && newStarredAt) {
-        payload.brew.starred_at = newStarredAt
+      if (this.isStarredValue && newStarredDate) {
+        payload.brew.starred_at = `${newStarredDate} 12:00:00`
       }
 
       try {
@@ -270,16 +299,16 @@ export default class extends Controller {
           parsed.brews[this.brewIdValue].dose = newDose
           parsed.brews[this.brewIdValue].grind = newGrind
           parsed.brews[this.brewIdValue].createdAt = new Date(newCreatedAt).toISOString()
-          if (this.isStarredValue && newStarredAt) {
-            parsed.brews[this.brewIdValue].starredAt = new Date(newStarredAt).toISOString()
+          if (this.isStarredValue && newStarredDate) {
+            parsed.brews[this.brewIdValue].starredAt = `${newStarredDate}T12:00:00.000Z`
           }
           sessionStorage.setItem("sprezza_sandbox_state", JSON.stringify(parsed))
         }
-        if (this.isStarredValue && newStarredAt) {
+        if (this.isStarredValue && newStarredDate) {
           parsed.brewStars = parsed.brewStars || {}
           parsed.brewStars[this.brewIdValue] = {
             star: true,
-            starredAt: new Date(newStarredAt).toISOString()
+            starredAt: `${newStarredDate}T12:00:00.000Z`
           }
           sessionStorage.setItem("sprezza_sandbox_state", JSON.stringify(parsed))
         }
@@ -320,7 +349,7 @@ export default class extends Controller {
       now.setHours(0, 0, 0, 0)
 
       if (this.isStarredValue) {
-        const refDateStr = this.currentStarredAt || this.currentCreatedAt
+        const refDateStr = this.currentStarredDate || this.currentCreatedAt
         const refDate = new Date(refDateStr)
         refDate.setHours(0, 0, 0, 0)
         const starDays = Math.max(0, Math.floor((now - refDate) / (1000 * 60 * 60 * 24)))
