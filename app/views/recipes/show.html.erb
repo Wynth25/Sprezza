@@ -1,30 +1,39 @@
 <div>
-  <%= render "shared/header", title: "Recipe Details" %>
+  <div style="margin-bottom: 20px;">
+    <%= link_to root_path, class: "back-btn" do %>
+      <i class="fa-solid fa-arrow-left"></i> Recipes
+    <% end %>
 
-  <div>
-    <h1><%= @recipe.bean.roastery %> <%= @recipe.bean.name %></h1>
-    <p style="overflow-wrap: anywhere; word-break: break-word;">
-      <%= @recipe.bean.description %></p>
-    <p style="overflow-wrap: anywhere; word-break: break-word;">
-      <%= @recipe.bean.notes %></p>
-    
-    <div id="recipe-latest-stat" style="display: none;">
-      <% if @recipe.latest_brew %>
-        <span class="stat-dose"><%= @recipe.latest_brew.dose %></span>g, <span class="stat-grind"><%= @recipe.latest_brew.grind %></span>
-      <% else %>
-        <span class="stat-dose">18.0</span>g, <span class="stat-grind">4.0</span>
+    <div style="margin-top: 8px;">
+      <h1 style="margin: 0; font-size: 1.6rem; font-weight: 800; color: var(--header-brown); line-height: 1.2;">
+        <%= @recipe.bean.roastery %> <%= @recipe.bean.name %>
+      </h1>
+      <div style="font-weight: 700; font-size: 1.05rem; color: <%= (@recipe.bean.frozen_on || @recipe.bean.freeze_date).present? ? '#0284c7' : 'var(--text-brown)' %>; margin-top: 4px;">
+        <%= @recipe.bean.effective_age_in_days %> days old
+      </div>
+      <% if @recipe.bean.description.present? %>
+        <p style="margin: 4px 0 0 0; font-size: 0.95rem; color: #6b6255; line-height: 1.4; overflow-wrap: anywhere; word-break: break-word;">
+          <%= @recipe.bean.description %>
+        </p>
       <% end %>
     </div>
   </div>
 
-  <br>
+  <div id="recipe-latest-stat" style="display: none;">
+    <% if @recipe.latest_brew %>
+      <span class="stat-dose"><%= @recipe.latest_brew.dose %></span>g, <span class="stat-grind"><%= @recipe.latest_brew.grind %></span>
+    <% else %>
+      <span class="stat-dose">18.0</span>g, <span class="stat-grind">4.0</span>
+    <% end %>
+  </div>
 
   <%= render partial: "recipes/brew_controls", locals: { recipe: @recipe } %>
 
   <br>
   <hr>
 
-  <div>
+  <div data-controller="brew-history-pagination"
+       data-brew-history-pagination-page-size-value="5">
     <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--header-brown); margin: 24px 0 12px 0;">Brew History</h3>
     <div id="brew-history-list" class="brew-history-list">
       <% if @recipe.brews.any? %>
@@ -69,6 +78,7 @@
           %>
           <div class="history-card <%= 'starred' if is_starred %>" 
                data-brew-id="<%= brew.id %>"
+               data-brew-history-pagination-target="item"
                data-controller="brew-history-edit"
                data-brew-history-edit-url-value="/recipes/<%= @recipe.id %>/brews/<%= brew.id %>"
                data-brew-history-edit-brew-id-value="<%= brew.id %>"
@@ -222,5 +232,27 @@
         <div class="empty-history"><p style="color: #888; font-style: italic;">No adjustments saved yet.</p></div>
       <% end %>
     </div>
+
+    <!-- Pagination Controls (Show more + Collapse to 5) -->
+    <div class="history-pagination-container hidden" data-brew-history-pagination-target="paginationContainer">
+      <button type="button" 
+              class="history-show-more-btn" 
+              data-brew-history-pagination-target="showMoreBtn" 
+              data-action="click->brew-history-pagination#showMore">
+        Show more
+      </button>
+
+      <button type="button" 
+              class="history-collapse-btn hidden" 
+              data-brew-history-pagination-target="collapseBtn" 
+              data-action="click->brew-history-pagination#collapse"
+              title="Collapse to 5 brews">
+        <i class="fa-solid fa-arrow-up"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="recipe-show-bean-card">
+    <%= render "beans/bean_card", bean: @recipe.bean, show_actions: false %>
   </div>
 </div>

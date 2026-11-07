@@ -1887,6 +1887,61 @@ input[type="date"] {
   box-shadow: 0 2px 6px rgba(56, 46, 36, 0.25);
 }
 
+/* Recipe Show Styles */
+.recipe-show-bean-card {
+  margin-top: 24px;
+}
+
+.history-pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.history-show-more-btn {
+  background-color: var(--card-cream);
+  border: 1.5px solid var(--btn-bg);
+  color: var(--text-brown);
+  border-radius: 20px;
+  padding: 8px 18px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+  transition: all 0.2s ease;
+}
+
+.history-show-more-btn:hover {
+  background-color: var(--btn-bg);
+  border-color: var(--accent);
+  color: var(--header-brown);
+}
+
+.history-collapse-btn {
+  background-color: var(--card-cream);
+  border: 1.5px solid var(--btn-bg);
+  color: var(--text-brown);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+  transition: all 0.2s ease;
+}
+
+.history-collapse-btn:hover {
+  background-color: var(--btn-bg);
+  border-color: var(--accent);
+  color: var(--header-brown);
+}
+
+
 
 
 
