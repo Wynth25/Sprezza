@@ -1679,61 +1679,70 @@ input[type="date"] {
 .history-edit-row {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
 }
 
-.history-arrow-btn {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  border: 1.5px solid var(--btn-bg);
-  background-color: var(--bg-beige, #f9f6f0);
+.history-number-input {
+  width: 72px;
+  height: 34px;
+  padding: 4px 6px;
+  border-radius: 8px;
+  border: 1.5px solid var(--btn-bg, #eaddcf);
+  background: #ffffff;
+  color: var(--header-brown, #382e24);
+  font-size: 1.15rem;
+  font-weight: 700;
+  text-align: center;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  -moz-appearance: number-input;
+}
+
+.history-number-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(184, 149, 115, 0.2);
+}
+
+.history-edit-unit {
+  font-size: 0.95rem;
+  font-weight: 700;
   color: var(--text-brown);
+  margin-left: 2px;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  padding: 0;
-  font-size: 0.75rem;
-  transition: all 0.15s ease;
-  user-select: none;
 }
 
-.history-arrow-btn:hover {
-  background-color: var(--accent);
-  color: #ffffff;
-  border-color: var(--accent);
-}
-
-.history-arrow-btn:active {
-  transform: scale(0.92);
-}
-
-.history-edit-value {
-  min-width: 48px;
-  text-align: center;
-  font-weight: 700;
-  font-size: 1.35rem;
-  line-height: 1.2;
-  color: var(--header-brown);
-}
-
+/* Save (Checkmark) icon - Keep standard beige button color */
 .history-action-btn.btn-save-brew {
-  background-color: #16a34a !important;
-  color: #ffffff !important;
+  background-color: var(--btn-bg) !important;
+  color: var(--text-brown) !important;
 }
 
 .history-action-btn.btn-save-brew:hover {
-  background-color: #15803d !important;
+  background-color: var(--accent) !important;
+  color: #ffffff !important;
 }
 
+/* Discard (X-mark) icon - Pink by default, turns red on confirm press */
 .history-action-btn.btn-discard-brew {
   background-color: #fce8e8 !important;
   color: #b91c1c !important;
 }
 
 .history-action-btn.btn-discard-brew:hover {
+  background-color: #fbd5d5 !important;
+  color: #b91c1c !important;
+}
+
+.history-action-btn.btn-discard-brew.confirm-discard {
   background-color: #dc2626 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.35) !important;
+}
+
+.history-action-btn.btn-discard-brew.confirm-discard:hover {
+  background-color: #b91c1c !important;
   color: #ffffff !important;
 }
 

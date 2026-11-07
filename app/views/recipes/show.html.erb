@@ -78,42 +78,28 @@
                 <div class="recipe-stat recipe-stat-grind" data-brew-history-edit-target="grindDisplay"><%= brew.grind %><i class="fa-solid fa-gear"></i></div>
               </div>
 
-              <!-- Edit View Stats with Arrow Controls -->
+              <!-- Edit View Stats with Arrow Controls (Number textboxes with up/down arrows) -->
               <div class="history-card-stats hidden" data-brew-history-edit-target="editStats">
                 <div class="history-edit-row">
-                  <button type="button" 
-                          class="history-arrow-btn" 
-                          data-action="click->brew-history-edit#adjustDose" 
-                          data-delta="-0.1" 
-                          title="-0.1g">
-                    <i class="fa-solid fa-chevron-left"></i>
-                  </button>
-                  <div class="recipe-stat recipe-stat-dose history-edit-value" data-brew-history-edit-target="doseDisplay"><%= brew.dose %><small>g</small></div>
-                  <button type="button" 
-                          class="history-arrow-btn" 
-                          data-action="click->brew-history-edit#adjustDose" 
-                          data-delta="0.1" 
-                          title="+0.1g">
-                    <i class="fa-solid fa-chevron-right"></i>
-                  </button>
+                  <input type="number" 
+                         step="0.1" 
+                         min="0.1" 
+                         class="history-number-input"
+                         data-brew-history-edit-target="doseInput"
+                         data-action="input->brew-history-edit#onDoseInput"
+                         value="<%= brew.dose %>">
+                  <span class="history-edit-unit">g</span>
                 </div>
 
                 <div class="history-edit-row">
-                  <button type="button" 
-                          class="history-arrow-btn" 
-                          data-action="click->brew-history-edit#adjustGrind" 
-                          data-delta="-0.1" 
-                          title="-0.1">
-                    <i class="fa-solid fa-chevron-left"></i>
-                  </button>
-                  <div class="recipe-stat recipe-stat-grind history-edit-value" data-brew-history-edit-target="grindDisplay"><%= brew.grind %><i class="fa-solid fa-gear"></i></div>
-                  <button type="button" 
-                          class="history-arrow-btn" 
-                          data-action="click->brew-history-edit#adjustGrind" 
-                          data-delta="0.1" 
-                          title="+0.1">
-                    <i class="fa-solid fa-chevron-right"></i>
-                  </button>
+                  <input type="number" 
+                         step="0.1" 
+                         min="0.1" 
+                         class="history-number-input"
+                         data-brew-history-edit-target="grindInput"
+                         data-action="input->brew-history-edit#onGrindInput"
+                         value="<%= brew.grind %>">
+                  <span class="history-edit-unit"><i class="fa-solid fa-gear"></i></span>
                 </div>
               </div>
 

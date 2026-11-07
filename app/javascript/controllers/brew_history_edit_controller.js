@@ -4,6 +4,7 @@ export default class extends Controller {
   static targets = [
     "viewStats", "editStats",
     "doseDisplay", "grindDisplay",
+    "doseInput", "grindInput",
     "editBtn", "starBtn",
     "saveBtn", "discardBtn"
   ]
@@ -20,6 +21,19 @@ export default class extends Controller {
     this.originalGrind = this.grindValue
     this.currentDose = this.doseValue
     this.currentGrind = this.grindValue
+    this.confirmingDiscard = false
+    this.boundDocClick = this.onDocumentClick.bind(this)
+    document.addEventListener("click", this.boundDocClick)
+  }
+
+  disconnect() {
+    document.removeEventListener("click", this.boundDocClick)
+  }
+
+  onDocumentClick(event) {
+    if (this.confirmingDiscard && this.hasDiscardBtnTarget && !this.discardBtnTarget.contains(event.target)) {
+      this.resetDiscardConfirm()
+    }
   }
 
   startEdit(event) {
@@ -31,7 +45,11 @@ export default class extends Controller {
     this.originalGrind = this.grindValue
     this.currentDose = this.doseValue
     this.currentGrind = this.grindValue
-    this.renderValues()
+
+    if (this.hasDoseInputTarget) this.doseInputTarget.value = this.currentDose.toFixed(1)
+    if (this.hasGrindInputTarget) this.grindInputTarget.value = this.currentGrind.toFixed(1)
+
+    this.resetDiscardConfirm()
 
     this.viewStatsTarget.classList.add("hidden")
     this.editStatsTarget.classList.remove("hidden")
@@ -43,6 +61,32 @@ export default class extends Controller {
     this.discardBtnTarget.classList.remove("hidden")
 
     this.element.classList.add("is-editing")
+
+    if (this.hasDoseInputTarget) {
+      setTimeout(() => this.doseInputTarget.focus(), 50)
+    }
+  }
+
+  onDoseInput() {
+    const val = parseFloat(this.doseInputTarget.value)
+    if (!isNaN(val)) {
+      this.currentDose = val
+    }
+    this.resetDiscardConfirm()
+  }
+
+  onGrindInput() {
+    const val = parseFloat(this.grindInputTarget.value)
+    if (!isNaN(val)) {
+      this.currentGrind = val
+    }
+    this.resetDiscardConfirm()
+  }
+
+  hasChanges() {
+    const doseDiff = Math.abs(this.currentDose - this.originalDose)
+    const grindDiff = Math.abs(this.currentGrind - this.originalGrind)
+    return doseDiff >= 0.05 || grindDiff >= 0.05
   }
 
   discard(event) {
@@ -50,38 +94,44 @@ export default class extends Controller {
       event.preventDefault()
       event.stopPropagation()
     }
+
+    // Double-press required ONLY if changes were made
+    if (this.hasChanges() && !this.confirmingDiscard) {
+      this.confirmingDiscard = true
+      this.discardBtnTarget.classList.add("confirm-discard")
+      this.discardBtnTarget.title = "Tap again to discard changes"
+      return
+    }
+
+    this.resetDiscardConfirm()
     this.currentDose = this.originalDose
     this.currentGrind = this.originalGrind
-    this.renderValues()
+    this.renderDisplayValues()
     this.exitEditMode()
   }
 
-  adjustDose(event) {
-    if (event) {
-      event.preventDefault()
-      event.stopPropagation()
+  resetDiscardConfirm() {
+    this.confirmingDiscard = false
+    if (this.hasDiscardBtnTarget) {
+      this.discardBtnTarget.classList.remove("confirm-discard")
+      this.discardBtnTarget.title = "Discard Changes"
     }
-    const delta = parseFloat(event.currentTarget.dataset.delta || 0)
-    this.currentDose = parseFloat((this.currentDose + delta).toFixed(1))
-    if (this.currentDose < 0) this.currentDose = 0
-    this.renderValues()
-  }
-
-  adjustGrind(event) {
-    if (event) {
-      event.preventDefault()
-      event.stopPropagation()
-    }
-    const delta = parseFloat(event.currentTarget.dataset.delta || 0)
-    this.currentGrind = parseFloat((this.currentGrind + delta).toFixed(1))
-    if (this.currentGrind < 0) this.currentGrind = 0
-    this.renderValues()
   }
 
   async save(event) {
     if (event) {
       event.preventDefault()
       event.stopPropagation()
+    }
+
+    // Read latest values from inputs
+    if (this.hasDoseInputTarget) {
+      const d = parseFloat(this.doseInputTarget.value)
+      if (!isNaN(d)) this.currentDose = parseFloat(d.toFixed(1))
+    }
+    if (this.hasGrindInputTarget) {
+      const g = parseFloat(this.grindInputTarget.value)
+      if (!isNaN(g)) this.currentGrind = parseFloat(g.toFixed(1))
     }
 
     const newDose = this.currentDose
@@ -92,7 +142,7 @@ export default class extends Controller {
     this.originalDose = newDose
     this.originalGrind = newGrind
 
-    this.renderValues()
+    this.renderDisplayValues()
     this.exitEditMode()
 
     // Update main dial base values if this is the latest brew
@@ -137,7 +187,7 @@ export default class extends Controller {
     }
   }
 
-  renderValues() {
+  renderDisplayValues() {
     const doseStr = this.currentDose.toFixed(1)
     const grindStr = this.currentGrind.toFixed(1)
 
@@ -150,6 +200,8 @@ export default class extends Controller {
   }
 
   exitEditMode() {
+    this.resetDiscardConfirm()
+
     this.viewStatsTarget.classList.remove("hidden")
     this.editStatsTarget.classList.add("hidden")
 
