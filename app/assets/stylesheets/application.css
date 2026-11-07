@@ -1683,9 +1683,9 @@ input[type="date"] {
 }
 
 .history-number-input {
-  width: 72px;
+  width: 50px;
   height: 34px;
-  padding: 4px 6px;
+  padding: 4px 2px;
   border-radius: 8px;
   border: 1.5px solid var(--btn-bg, #eaddcf);
   background: #ffffff;
