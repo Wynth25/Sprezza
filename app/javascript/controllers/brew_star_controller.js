@@ -123,7 +123,7 @@ export default class extends Controller {
       }
     } else {
       this.element.classList.remove("starred")
-      this.element.title = "Star Brew"
+      this.element.title = "Star"
       if (icon) {
         icon.classList.remove("fa-solid")
         icon.classList.add("fa-regular")

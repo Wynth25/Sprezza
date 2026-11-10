@@ -26,7 +26,7 @@ class BrewsController < ApplicationController
 
     respond_to do |format|
       if @brew.save
-        format.html { redirect_to recipe_url(@brew.recipe), notice: "Brew was successfully created." }
+        format.html { redirect_to recipe_url(@brew.recipe), notice: "Log created." }
         format.json { render :show, status: :created, location: @brew }
       else
         format.html { render :new, status: :unprocessable_content }
@@ -45,7 +45,7 @@ class BrewsController < ApplicationController
 
     respond_to do |format|
       if @brew.update(clean_params)
-        format.html { redirect_back fallback_location: root_path, notice: "Brew was successfully updated." }
+        format.html { redirect_back fallback_location: root_path, notice: "Log updated." }
         format.json { 
           render json: { 
             id: @brew.id, 
@@ -68,7 +68,7 @@ class BrewsController < ApplicationController
     @brew.destroy!
 
     respond_to do |format|
-      format.html { redirect_to (@brew.recipe ? recipe_url(@brew.recipe) : root_path), notice: "Brew was successfully destroyed.", status: :see_other }
+      format.html { redirect_to (@brew.recipe ? recipe_url(@brew.recipe) : root_path), notice: "Log deleted.", status: :see_other }
       format.json { head :no_content }
     end
   end

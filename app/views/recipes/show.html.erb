@@ -34,7 +34,7 @@
 
   <div data-controller="brew-history-pagination"
        data-brew-history-pagination-page-size-value="5">
-    <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--header-brown); margin: 24px 0 12px 0;">Brew History</h3>
+    <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--header-brown); margin: 24px 0 12px 0;">History</h3>
     <div id="brew-history-list" class="brew-history-list">
       <% if @recipe.brews.any? %>
         <% brews_list = @recipe.brews.order(created_at: :desc).to_a %>
@@ -174,14 +174,14 @@
                 <!-- Standard Mode Buttons -->
                 <button type="button" 
                         class="action-icon-btn history-action-btn" 
-                        title="Edit Brew"
+                        title="Edit Entry"
                         data-brew-history-edit-target="editBtn"
                         data-action="click->brew-history-edit#startEdit">
                   <i class="fa-solid fa-pencil"></i>
                 </button>
                 <button type="button" 
                         class="action-icon-btn history-action-btn <%= 'starred' if is_starred %>" 
-                        title="<%= is_starred ? 'Starred' : 'Star Brew' %>"
+                        title="<%= is_starred ? 'Starred' : 'Star' %>"
                         data-brew-history-edit-target="starBtn"
                         data-controller="brew-star"
                         data-brew-star-url-value="/recipes/<%= @recipe.id %>/brews/<%= brew.id %>"
@@ -221,7 +221,7 @@
             <div data-brew-history-edit-target="editNotes" class="hidden">
               <div class="history-card-divider-h"></div>
               <textarea class="history-notes-input" 
-                        placeholder="Add or edit brew notes..." 
+                        placeholder="Add or edit notes..." 
                         rows="2"
                         data-brew-history-edit-target="notesInput"
                         data-action="input->brew-history-edit#onNotesInput"><%= brew_notes %></textarea>

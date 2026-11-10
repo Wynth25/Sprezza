@@ -27,7 +27,7 @@ class RecipesController < ApplicationController
           grind: params[:initial_grind]
         )
       end
-      redirect_to root_path, notice: "Recipe created and dialed in!"
+      redirect_to root_path, notice: "Recipe created!"
     else
       render :new, status: :unprocessable_entity
     end
@@ -55,7 +55,7 @@ class RecipesController < ApplicationController
     brew_attrs[:notes] = brew_notes if brew_notes.present? && Brew.column_names.include?("notes")
 
     @recipe.brews.create!(brew_attrs)
-    redirect_to recipes_path, notice: "Brewed!"
+    redirect_to recipes_path, notice: "Logged!"
   end
 
   def sort

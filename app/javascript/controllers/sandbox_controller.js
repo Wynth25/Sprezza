@@ -143,12 +143,12 @@ export default class extends Controller {
         </div>
 
         <div class="history-card-actions">
-          <button type="button" class="action-icon-btn history-action-btn" title="Edit Brew">
+          <button type="button" class="action-icon-btn history-action-btn" title="Edit Entry">
             <i class="fa-solid fa-pencil"></i>
           </button>
           <button type="button" 
                   class="action-icon-btn history-action-btn ${isStarred ? 'starred' : ''}" 
-                  title="${isStarred ? 'Starred' : 'Star Brew'}"
+                  title="${isStarred ? 'Starred' : 'Star'}"
                   data-controller="brew-star"
                   data-brew-star-url-value=""
                   data-brew-star-starred-value="${isStarred ? 'true' : 'false'}"
