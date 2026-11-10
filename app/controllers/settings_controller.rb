@@ -7,6 +7,10 @@ class SettingsController < ApplicationController
 
     @grinder_min = Setting.get("grinder_min", "1.0")
     @grinder_max = Setting.get("grinder_max", "10.0")
+
+    @water_min = Setting.get("water_min", "200")
+    @water_max = Setting.get("water_max", "750")
+    @water_step = Setting.get("water_step", "20")
   end
 
   def update
@@ -41,6 +45,31 @@ class SettingsController < ApplicationController
       respond_to do |format|
         format.html { redirect_to settings_path, notice: "Grinder range saved." }
         format.json { render json: { status: "ok", grinder_min: Setting.get("grinder_min"), grinder_max: Setting.get("grinder_max") } }
+      end
+      return
+    end
+
+    # Handle water range & step (Pour-over)
+    if params[:water_min].present? || params[:water_max].present? || params[:water_step].present?
+      w_min = params[:water_min].to_i if params[:water_min].present?
+      w_max = params[:water_max].to_i if params[:water_max].present?
+      w_step = params[:water_step].to_i if params[:water_step].present?
+
+      if w_min && w_max && w_min >= w_max
+        respond_to do |format|
+          format.html { redirect_to settings_path, alert: "Minimum water volume must be less than maximum." }
+          format.json { render json: { error: "Minimum must be less than maximum" }, status: :unprocessable_entity }
+        end
+        return
+      end
+
+      Setting.set("water_min", w_min.to_s) if w_min && w_min > 0
+      Setting.set("water_max", w_max.to_s) if w_max && w_max > 0
+      Setting.set("water_step", w_step.to_s) if w_step && w_step > 0
+
+      respond_to do |format|
+        format.html { redirect_to settings_path, notice: "Water settings saved." }
+        format.json { render json: { status: "ok", water_min: Setting.get("water_min"), water_max: Setting.get("water_max"), water_step: Setting.get("water_step") } }
       end
       return
     end

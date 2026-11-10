@@ -251,4 +251,62 @@ class SandboxActionsTest < ActionDispatch::IntegrationTest
     assert_select "input#initial_grind_slider[min='2.0'][max='8.5'][value='5.3']"
     assert_select "input#initial_grind_number[min='2.0'][max='8.5'][value='5.3']"
   end
+
+  test "pour-over beta recipe creation, water settings, and rendering" do
+    bean = beans(:one)
+
+    # 1. Default new recipe page includes Pour-over (beta) bubble and default 200-750 (step 20) water range
+    get new_recipe_path
+    assert_response :success
+    assert_select ".style-selector-pill", text: "Pour-over (beta)"
+    assert_select "input#recipe_water_slider[min='200'][max='750'][step='20'][value='480']"
+    assert_select "input#recipe_water_number[min='200'][max='750'][step='1'][value='480']"
+
+    # 2. Invalid water range in settings is rejected
+    patch settings_path, params: { water_min: "600", water_max: "500" }
+    assert_redirected_to settings_path
+    assert_equal "Minimum water volume must be less than maximum.", flash[:alert]
+
+    # 3. Valid water range & step updates settings and reflects on new recipe slider
+    patch settings_path, params: { water_min: "180", water_max: "600", water_step: "25" }
+    assert_redirected_to settings_path
+    assert_equal "180", Setting.get("water_min")
+    assert_equal "600", Setting.get("water_max")
+    assert_equal "25", Setting.get("water_step")
+
+    get new_recipe_path
+    assert_response :success
+    assert_select "input#recipe_water_slider[min='180'][max='600'][step='25'][value='380']"
+    assert_select "input#recipe_water_number[min='180'][max='600'][step='1'][value='380']"
+
+    # 4. Creating a Pour-over recipe without a basket persists water and renders on index & show
+    assert_difference -> { Recipe.count } => 1, -> { Brew.count } => 1 do
+      post recipes_path, params: {
+        recipe: {
+          bean_id: bean.id,
+          style: "Pour-over",
+          water: 320
+        },
+        initial_dose: 20.0,
+        initial_grind: 6.5
+      }
+    end
+    assert_redirected_to root_path
+
+    recipe = Recipe.last
+    assert recipe.pour_over?
+    assert_nil recipe.basket_id
+    assert_equal 320, recipe.water
+
+    get recipes_path
+    assert_response :success
+    assert_select ".recipe-card-pour-over .recipe-stat-water", text: "320ml"
+    assert_select ".recipe-corner-badge", text: "P"
+    assert_select "hr.recipe-subdivider", minimum: 1
+
+    get recipe_path(recipe)
+    assert_response :success
+    assert_select ".dial-card-title .recipe-stat-water", text: "320ml"
+    assert_select ".recipe-corner-badge", text: "P"
+  end
 end

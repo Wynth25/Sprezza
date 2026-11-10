@@ -38,15 +38,17 @@
         </div>
 
         <!-- Center Card -->
-        <div class="dial-card recipe-card">
-          <% if recipe.style.to_s.start_with?("Ristretto") %>
-            <div class="recipe-corner-badge">R</div>
-          <% elsif recipe.style.to_s.start_with?("Lungo") %>
-            <div class="recipe-corner-badge">L</div>
+        <div class="dial-card recipe-card <%= 'recipe-card-pour-over' if recipe.pour_over? %>">
+          <% if (badge = recipe.corner_badge) %>
+            <div class="recipe-corner-badge"><%= badge %></div>
           <% end %>
 
           <div class="recipe-card-title dial-card-title">
-            <%= recipe.basket.name %>
+            <% if recipe.pour_over? %>
+              <div class="recipe-stat recipe-stat-water"><%= recipe.water %><small>ml</small></div>
+            <% else %>
+              <%= recipe.basket&.name %>
+            <% end %>
           </div>
 
           <div class="recipe-card-stats dial-card-stats">

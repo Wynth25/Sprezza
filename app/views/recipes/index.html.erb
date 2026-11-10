@@ -56,48 +56,30 @@
           </div>
 
           <% if bean.recipes.any? %>
-            <div class="recipe-grid" data-dashboard-target="recipeGrid" data-bean-id="<%= bean.id %>" data-basket-scope="true">
-              <% bean.recipes.each do |recipe| %>
-                
-                <div class="recipe-card-wrapper" data-id="<%= recipe.id %>" data-basket-id="<%= recipe.basket_id %>">
-                  
-                  <%= link_to recipe_path(recipe), class: "recipe-card" do %>
-                    <% if recipe.style.to_s.start_with?("Ristretto") %>
-                      <div class="recipe-corner-badge">R</div>
-                    <% elsif recipe.style.to_s.start_with?("Lungo") %>
-                      <div class="recipe-corner-badge">L</div>
-                    <% end %>
+            <% espresso_recipes = bean.recipes.reject(&:pour_over?) %>
+            <% pour_over_recipes = bean.recipes.select(&:pour_over?) %>
 
-                    <div class="recipe-card-title">
-                      <%= recipe.basket.name %>
-                    </div>
-                    
-                    <div class="recipe-card-stats">
-                      <% if recipe.latest_brew %>
-                        <div class="recipe-stat recipe-stat-dose"><%= recipe.latest_brew.dose %><small>g</small></div>
-                        <div class="recipe-stat recipe-stat-grind"><%= recipe.latest_brew.grind %><i class="fa-solid fa-gear"></i></div>
-                      <% else %>
-                        <em style="font-size: 0.85rem; font-weight: 400; color: #888;">Not dialed in</em>
-                      <% end %>
-                    </div>
-                  <% end %>
+            <% if espresso_recipes.any? %>
+              <div class="recipe-grid" data-dashboard-target="recipeGrid" data-bean-id="<%= bean.id %>" data-basket-scope="true">
+                <% espresso_recipes.each do |recipe| %>
+                  <%= render "recipes/recipe_card", recipe: recipe, bean: bean %>
+                <% end %>
+              </div>
+            <% end %>
 
-                  <!-- Sort Overlay Grip (Sort mode) -->
-                  <div class="recipe-sort-overlay">
-                    <i class="fa-solid fa-grip-vertical"></i>
-                  </div>
+            <% if espresso_recipes.any? && pour_over_recipes.any? %>
+              <hr class="recipe-subdivider">
+            <% end %>
 
-                  <!-- Delete Overlay Form (Delete mode) -->
-                  <%= button_to recipe_path(recipe), method: :delete, form_class: "delete-overlay-form", data: { turbo_confirm: "Delete #{recipe.basket.name} recipe for #{bean.name}?" }, class: "recipe-delete-overlay" do %>
-                    <i class="fa-solid fa-trash-can"></i>
-                  <% end %>
-                  
-                </div>
-
-              <% end %>
-            </div>
+            <% if pour_over_recipes.any? %>
+              <div class="recipe-grid" data-dashboard-target="recipeGrid" data-bean-id="<%= bean.id %>" data-basket-scope="true">
+                <% pour_over_recipes.each do |recipe| %>
+                  <%= render "recipes/recipe_card", recipe: recipe, bean: bean %>
+                <% end %>
+              </div>
+            <% end %>
           <% else %>
-            <p>No baskets dialed in yet.</p>
+            <p>No recipes dialed in yet.</p>
           <% end %>
           
           <hr>

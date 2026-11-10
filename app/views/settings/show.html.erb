@@ -115,7 +115,53 @@
     <% end %>
   </div>
 
-  <!-- 4. DATABASE & ACCESS MODE -->
+  <!-- 4. WATER SETTINGS (POUR-OVER BETA) -->
+  <div class="settings-card">
+    <h3 style="margin-top: 0; display: flex; align-items: center; gap: 8px; font-size: 1.15rem;">
+      <i class="fa-solid fa-droplet"></i> Water Range <span style="font-size: 0.78rem; font-weight: 700; color: var(--accent);">(Pour-over beta)</span>
+    </h3>
+    <p style="color: var(--text-brown); opacity: 0.85; font-size: 0.9rem; margin-bottom: 16px;">
+      Adjust the minimum, maximum, and slider step for water volume when creating a new pour-over recipe.
+    </p>
+
+    <%= form_with url: settings_path, method: :patch, style: "display: flex; flex-direction: column; gap: 12px;" do |f| %>
+      <!-- Water Volume Range Box -->
+      <div class="settings-compact-box">
+        <div class="settings-compact-row">
+          <span class="settings-row-label">Water</span>
+          <div class="settings-inputs-pair">
+            <div class="settings-input-group">
+              <%= f.number_field :water_min, value: @water_min, step: "1", min: "1", max: "5000", id: "water_min", class: "settings-number-input" %>
+              <span class="settings-unit">ml</span>
+            </div>
+            <div class="settings-input-group">
+              <%= f.number_field :water_max, value: @water_max, step: "1", min: "1", max: "5000", id: "water_max", class: "settings-number-input" %>
+              <span class="settings-unit">ml</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Water Slider Step Box -->
+      <div class="settings-compact-box">
+        <div class="settings-compact-row">
+          <span class="settings-row-label">Slider Step</span>
+          <div class="settings-inputs-pair">
+            <div class="settings-input-group">
+              <%= f.number_field :water_step, value: @water_step, step: "1", min: "1", max: "500", id: "water_step", class: "settings-number-input" %>
+              <span class="settings-unit">ml</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: 6px;">
+        <%= f.submit "Save Water Range", class: "btn-primary", style: "border-radius: 12px; padding: 10px 18px; font-weight: 700; cursor: pointer; border: none;" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- 5. DATABASE & ACCESS MODE -->
   <div class="settings-card">
     <h3 style="margin-top: 0; display: flex; align-items: center; gap: 8px; font-size: 1.15rem;">
       <i class="fa-solid fa-database"></i> Database &amp; Access Mode

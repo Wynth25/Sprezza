@@ -1,6 +1,19 @@
 <div data-controller="sync-slider">
   <%= form_with(model: recipe, class: "contents") do |form| %>
-    
+    <% if recipe.errors.any? %>
+      <div style="background: rgba(233, 75, 89, 0.08); border: 1.5px solid var(--danger-red); border-radius: 12px; padding: 12px 16px; margin-bottom: 20px; color: var(--header-brown);">
+        <strong style="display: block; margin-bottom: 4px; color: #b91c1c;">Could not save recipe:</strong>
+        <ul style="margin: 0; padding-left: 20px; font-size: 0.9rem;">
+          <% recipe.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <% current_style = recipe.style.presence || "Espresso" %>
+    <% is_pour_over = current_style.to_s.start_with?("Pour-over") %>
+
     <% if @recipe.bean_id.present? %>
       <%= form.hidden_field :bean_id %>
       <h1><%= @recipe.bean.roastery %> <%= @recipe.bean.name %></h1>
@@ -11,41 +24,85 @@
       </p>
     <% end %>
 
-    <div style="margin-bottom: 20px;">
+    <div style="margin-bottom: 25px;">
+      <%= form.label :style, "Style:", style: "display: block; font-weight: bold; margin-bottom: 8px;" %>
+      <div class="style-selectors-wrapper">
+        <div class="style-selector-container">
+          <% ["Ristretto", "Espresso", "Lungo"].each do |st| %>
+            <label class="style-selector-label">
+              <%= form.radio_button :style, st, checked: (current_style == st),
+                    class: "style-selector-radio",
+                    data: { action: "change->sync-slider#toggleStyle" } %>
+              <span class="style-selector-pill"><%= st %></span>
+            </label>
+          <% end %>
+        </div>
+
+        <div class="style-selector-container style-selector-single">
+          <label class="style-selector-label">
+            <%= form.radio_button :style, "Pour-over", checked: is_pour_over,
+                  class: "style-selector-radio",
+                  data: { action: "change->sync-slider#toggleStyle", sync_slider_target: "pourOverRadio" } %>
+            <span class="style-selector-pill">Pour-over (beta)</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- BASKET SELECTOR (Espresso modes) -->
+    <div class="<%= 'hidden' if is_pour_over %>" style="margin-bottom: 20px;" data-sync-slider-target="basketField">
       <%= form.label :basket_id, "Basket:", style: "display: block; font-weight: bold; margin-bottom: 5px;" %>
       
       <%= form.select :basket_id, 
-            options_for_select(Basket.order(position: :asc, created_at: :asc).map { |b| [b.name, b.id, { "data-min" => b.min_dose, "data-max" => b.max_dose }] }), 
+            options_for_select(Basket.order(position: :asc, created_at: :asc).map { |b| [b.name, b.id, { "data-min" => b.min_dose, "data-max" => b.max_dose }] }, recipe.basket_id), 
             { prompt: "–" }, 
-            { data: { sync_slider_target: "basketSelect", action: "change->sync-slider#updateBounds" }, 
+            { disabled: is_pour_over,
+              data: { sync_slider_target: "basketSelect", action: "change->sync-slider#updateBounds" }, 
               style: "padding: 8px; width: 100%; max-width: 300px;" } %>
     </div>
 
-    <div style="margin-bottom: 30px;">
-      <%= form.label :style, "Style:", style: "display: block; font-weight: bold; margin-bottom: 8px;" %>
-      <% current_style = recipe.style.presence || "Espresso" %>
-      <div class="style-selector-container">
-        <% ["Ristretto", "Espresso", "Lungo"].each do |st| %>
-          <label class="style-selector-label">
-            <%= form.radio_button :style, st, checked: (current_style == st), class: "style-selector-radio" %>
-            <span class="style-selector-pill"><%= st %></span>
-          </label>
-        <% end %>
+    <!-- WATER SLIDER (Pour-over beta) -->
+    <%
+      water_min = Setting.get("water_min", "200").to_i
+      water_max = Setting.get("water_max", "750").to_i
+      water_step = Setting.get("water_step", "20").to_i
+      water_min = 200 if water_min <= 0
+      water_max = 750 if water_max <= water_min
+      water_step = 20 if water_step <= 0
+      steps_count = ((water_max - water_min) / water_step.to_f / 2.0).round
+      water_default = recipe.water.present? ? recipe.water.to_i : [water_min + (steps_count * water_step), water_max].min
+    %>
+    <div class="<%= 'hidden' unless is_pour_over %>" style="margin-bottom: 20px;" data-sync-slider-target="waterField">
+      <%= form.label :water, "Water (ml)", style: "display: block; font-weight: bold; margin-bottom: 10px;" %>
+      <div style="display: flex; gap: 15px; align-items: center;">
+        <%= range_field_tag :water_slider, water_default, min: water_min, max: water_max, step: water_step,
+              id: "recipe_water_slider",
+              disabled: !is_pour_over,
+              data: { sync_slider_target: "waterSlider", action: "input->sync-slider#updateWaterNumber" },
+              style: "flex-grow: 1; max-width: 200px;" %>
+
+        <%= form.number_field :water, value: water_default, min: water_min, max: water_max, step: 1,
+              id: "recipe_water_number",
+              disabled: !is_pour_over,
+              data: { sync_slider_target: "waterNumber", action: "input->sync-slider#updateWaterSlider" },
+              style: "width: 70px; padding: 5px; text-align: center;" %>
       </div>
     </div>
 
     <hr style="margin: 30px 0; border: 1px solid #eee;">
     <h3 style="margin-bottom: 20px;">Initial Settings</h3>
 
-    <!-- DOSE SLIDER (Locked by default) -->
+    <!-- DOSE SLIDER (Locked by default in espresso mode until basket selected) -->
     <div style="margin-bottom: 30px;">
       <label style="display: block; font-weight: bold; margin-bottom: 10px;">Initial Dose (g)</label>
       <div style="display: flex; gap: 15px; align-items: center;">
-        <%= range_field_tag :initial_dose, 18.0, min: 14, max: 22, step: 0.1, disabled: true,
+        <%= range_field_tag :initial_dose, 18.0, min: 14, max: 22, step: 0.1, disabled: !is_pour_over,
+              id: "initial_dose_slider",
               data: { sync_slider_target: "doseSlider", action: "input->sync-slider#updateNumber" }, 
               style: "flex-grow: 1; max-width: 200px;" %>
         
-        <%= number_field_tag :initial_dose, 18.0, step: 0.1, disabled: true,
+        <%= number_field_tag :initial_dose, 18.0, step: 0.1, disabled: !is_pour_over,
+              id: "initial_dose_number",
               data: { sync_slider_target: "doseNumber", action: "input->sync-slider#updateSlider" }, 
               style: "width: 70px; padding: 5px; text-align: center;" %>
       </div>

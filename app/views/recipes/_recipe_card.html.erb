@@ -1,0 +1,42 @@
+<div class="recipe-card-wrapper" data-id="<%= recipe.id %>" data-basket-id="<%= recipe.basket_id %>">
+  <%= link_to recipe_path(recipe), class: "recipe-card #{'recipe-card-pour-over' if recipe.pour_over?}" do %>
+    <% if (badge = recipe.corner_badge) %>
+      <div class="recipe-corner-badge"><%= badge %></div>
+    <% end %>
+
+    <% if recipe.pour_over? %>
+      <div class="recipe-card-stats">
+        <div class="recipe-stat recipe-stat-water"><%= recipe.water %><small>ml</small></div>
+        <% if recipe.latest_brew %>
+          <div class="recipe-stat recipe-stat-dose"><%= recipe.latest_brew.dose %><small>g</small></div>
+          <div class="recipe-stat recipe-stat-grind"><%= recipe.latest_brew.grind %><i class="fa-solid fa-gear"></i></div>
+        <% else %>
+          <em style="font-size: 0.85rem; font-weight: 400; color: #888;">Not dialed in</em>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="recipe-card-title">
+        <%= recipe.basket&.name %>
+      </div>
+
+      <div class="recipe-card-stats">
+        <% if recipe.latest_brew %>
+          <div class="recipe-stat recipe-stat-dose"><%= recipe.latest_brew.dose %><small>g</small></div>
+          <div class="recipe-stat recipe-stat-grind"><%= recipe.latest_brew.grind %><i class="fa-solid fa-gear"></i></div>
+        <% else %>
+          <em style="font-size: 0.85rem; font-weight: 400; color: #888;">Not dialed in</em>
+        <% end %>
+      </div>
+    <% end %>
+  <% end %>
+
+  <!-- Sort Overlay Grip (Sort mode) -->
+  <div class="recipe-sort-overlay">
+    <i class="fa-solid fa-grip-vertical"></i>
+  </div>
+
+  <!-- Delete Overlay Form (Delete mode) -->
+  <%= button_to recipe_path(recipe), method: :delete, form_class: "delete-overlay-form", data: { turbo_confirm: "Delete #{recipe.display_title} recipe for #{bean.name}?" }, class: "recipe-delete-overlay" do %>
+    <i class="fa-solid fa-trash-can"></i>
+  <% end %>
+</div>

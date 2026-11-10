@@ -935,13 +935,13 @@ input[type="date"] {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  width: 86px;
+  width: 96px;
   justify-content: flex-start;
 }
 
 .settings-number-input {
-  width: 58px !important;
-  max-width: 58px !important;
+  width: 68px !important;
+  max-width: 68px !important;
   height: 34px !important;
   padding: 4px 6px !important;
   border-radius: 8px !important;
@@ -955,6 +955,13 @@ input[type="date"] {
   outline: none !important;
   transition: border-color 0.2s, box-shadow 0.2s !important;
   flex-shrink: 0;
+  -moz-appearance: textfield;
+}
+
+.settings-number-input::-webkit-outer-spin-button,
+.settings-number-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .settings-number-input:focus {
@@ -969,14 +976,63 @@ input[type="date"] {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 18px;
+  width: 22px;
   flex-shrink: 0;
 }
 
+@media (max-width: 480px) {
+  .settings-compact-box {
+    padding: 10px 12px;
+  }
 
-/* Extra spacing: lift the dose slightly away from the grind on dashboard cards */
+  .settings-inputs-pair {
+    gap: 6px;
+  }
+
+  .settings-input-group {
+    width: 82px;
+  }
+
+  .settings-number-input {
+    width: 56px !important;
+    max-width: 56px !important;
+  }
+}
+
+
+/* Extra spacing: lift the dose slightly away from the grind on standard espresso dashboard cards */
 .recipe-grid .recipe-stat-dose {
   transform: translateY(-0.5em);
+}
+
+/* Pour-over cards display Water, Dose, and Grind with equal vertical spacing */
+.recipe-card-pour-over .recipe-card-stats {
+  flex: 0 0 auto;
+  padding-bottom: 0;
+  gap: 4cqw;
+  line-height: 1.05;
+}
+
+.recipe-card-pour-over .recipe-stat {
+  line-height: 1.05;
+}
+
+.recipe-grid .recipe-card-pour-over .recipe-stat-dose {
+  transform: none;
+}
+
+.dial-card.recipe-card-pour-over {
+  gap: 8px;
+}
+
+.dial-card.recipe-card-pour-over .dial-card-title {
+  flex: 0 0 auto;
+}
+
+.dial-card.recipe-card-pour-over .dial-card-stats {
+  flex: 0 0 auto;
+  gap: 8px;
+  padding-bottom: 0;
 }
 
 /* ==========================================================================
@@ -1922,18 +1978,32 @@ input[type="date"] {
 }
 
 /* Style Segmented Selector for Recipe Form */
+.style-selectors-wrapper {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+  align-items: center;
+  max-width: 100%;
+}
+
 .style-selector-container {
   display: flex;
   background-color: var(--btn-bg);
   padding: 4px;
   border-radius: 14px;
-  gap: 4px;
-  max-width: 360px;
+  gap: 3px;
+  flex: 0 1 auto;
   box-sizing: border-box;
 }
 
+.style-selector-container.style-selector-single {
+  flex: 0 0 auto;
+  width: auto;
+  max-width: none;
+}
+
 .style-selector-label {
-  flex: 1;
+  flex: 1 1 auto;
   text-align: center;
   margin: 0;
   cursor: pointer;
@@ -1947,17 +2017,44 @@ input[type="date"] {
   display: block;
   padding: 8px 12px;
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   color: var(--text-brown);
   border-radius: 10px;
   transition: all 0.2s ease;
   user-select: none;
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .style-selectors-wrapper {
+    gap: 6px;
+  }
+
+  .style-selector-pill {
+    padding: 8px 8px;
+    font-size: 0.8rem;
+  }
 }
 
 .style-selector-radio:checked + .style-selector-pill {
   background-color: var(--header-brown);
   color: #ffffff;
   box-shadow: 0 2px 6px rgba(56, 46, 36, 0.25);
+}
+
+/* Smaller divider between standard espresso cards and pour-over cards */
+.recipe-grid:has(+ .recipe-subdivider) {
+  margin-bottom: 12px;
+}
+
+.recipe-subdivider {
+  border: 0;
+  height: 1.5px;
+  width: 45%;
+  background-color: var(--btn-bg);
+  margin: 0 auto 14px auto;
+  border-radius: 2px;
+  opacity: 0.85;
 }
 
 /* Recipe Show Styles */

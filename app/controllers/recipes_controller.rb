@@ -74,6 +74,6 @@ class RecipesController < ApplicationController
   end
 
   def recipe_params
-    params.require(:recipe).permit(:bean_id, :basket_id, :style, :archived, :position, :star, :notes)
+    params.require(:recipe).permit(:bean_id, :basket_id, :style, :water, :archived, :position, :star, :notes)
   end
 end

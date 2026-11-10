@@ -4,10 +4,17 @@
     <%= recipe.bean.roastery %> <%= recipe.bean.name %>
   </div>
 
-  <div>
-    <strong>Basket:</strong>
-    <%= recipe.basket.name %>
-  </div>
+  <% if recipe.pour_over? %>
+    <div>
+      <strong>Water:</strong>
+      <%= recipe.water %>ml
+    </div>
+  <% else %>
+    <div>
+      <strong>Basket:</strong>
+      <%= recipe.basket&.name %>
+    </div>
+  <% end %>
 
   <div>
     <strong>Style:</strong>
